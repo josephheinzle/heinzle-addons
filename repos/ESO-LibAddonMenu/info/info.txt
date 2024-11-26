@@ -1,0 +1,3 @@
+title: LibAddonMenu-2.0
+version: 2.0 r38
+compatiblity: 10.3.0

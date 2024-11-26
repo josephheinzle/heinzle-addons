@@ -1,0 +1,259 @@
+2.0 r38
+- fixed submenus only opening once after Update 45 ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/145]#145[/url], thanks Baertram)
+- added new callback "LAM-PanelControlsCreated" which gets called right before a panel is shown for the first time
+- updated for Fallen Banners
+
+2.0 r37
+- added Turkish and Ukrainian translations ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/137]#137[/url], thanks Sharlikran)
+- fixed multi-select dropdowns not showing selected entries correctly ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/140]#140[/url], thanks MycroftJr)
+- fixed dropdown choice tooltips not working correctly (thanks Calamath)
+- updated for Gold Road
+
+2.0 r36
+- added multiselect feature to dropdown control ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/135]#135[/url], thanks Baertram)
+- fixed anchor constraint warnings in the interface.log ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/136]#136[/url], thanks DakJaniels)
+- fixed a bug which could lead to some controls not getting created in some rare cases
+- updated for Scions of Ithelia
+
+2.0 r35
+- added "resetFunc" to each control type which gets called while resetting a panel to default values ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/130]#130[/url], thanks Baertram)
+- added workaround for dropdown menus getting cut off when used inside submenus
+- updated for Secret of the Telvanni
+
+2.0 r34
+- added tooltips for header and description controls ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/129]#129[/url], thanks remosito)
+- fixed old icons not being hidden when choices are updated on the icon picker (thanks Gandalf)
+- updated for High Isle
+
+2.0 r33
+- fixed dropdown widget choicesValues not accepting boolean "false" ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/127]#127[/url], thanks Baertram)
+- switched to a new build system
+- updated for Ascending Tide
+
+2.0 r32
+- updated folder structure ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/119]#119[/url])
+- added "createFunc", "minHeight" and "maxHeight" properties to custom control ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/123]#123[/url], thanks Baertram)
+
+2.0 r31
+- fixed iconpicker showing an empty tooltip when no choicesTooltips are set ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/111]#111[/url], thanks Scootworks)
+- fixed slider mouse wheel interactions ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/115]#115[/url])
+- fixed translated texts not showing in the official Russian localization ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/118]#118[/url], thanks andy.s)
+- improved dropdown choice tooltip code compatibility ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/115]#115[/url])
+- added "helpUrl" property for many control types ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/109]#109[/url], thanks Baertram)
+- added "textType" and "maxChars" properties for editbox ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/110]#110[/url], thanks Scootworks)
+- added "readOnly" property for slider ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/112]#112[/url], thanks Scootworks)
+- removed embedded copy of LibStub ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/116]#116[/url])
+- updated Japanese translation ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/113]#113[/url], thanks Calamath)
+- updated for Greymoor
+
+2.0 r30
+- updated Korean translation (thanks whya5448)
+- added "enableLinks" property to description control ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/102]#102[/url], thanks silvereyes333)
+- updated for Dragonhold
+
+2.0 r29
+- fixed a rare error when a panel refresh is triggered by an addon before LAM is fully initialized ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/98]#98[/url])
+- fixed SetHandler warning showing when a scrollable dropdown is used ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/97]#97[/url])
+- improved SetHandler warning message to show the panel title instead of the internal name and in addition log to LibDebugLogger for easy access to a stack trace ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/99]#99[/url])
+- improved comments in control files ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/100]#100[/url], thanks Phuein)
+- adjusted ReloadUI warning color to match the color of the warning in the ingame video settings ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/101]#101[/url], thanks Phuein)
+
+2.0 r28
+- fixed color picker throwing errors in gamepad mode ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/94]#94[/url], thanks Gandalf)
+- added global variable "LibAddonMenu2" for direct access without using LibStub ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/95]#95[/url])
+- added IsLibrary directive to manifest ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/93]#93[/url])
+- added warning message when an addon is setting the "OnShow", "OnEffectivelyShown", "OnHide" or "OnEffectivelyHidden" handler on a panel ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/92]#92[/url])
+[INDENT]- use the callbacks "LAM-PanelControlsCreated", "LAM-PanelOpened" and "LAM-PanelClosed" instead[/INDENT]
+- updated Brazilian translation (thanks FelipeS11)
+
+2.0 r27
+- fixed scrollable dropdown not working correctly ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/83]#83[/url])
+- fixed disabled sliders changing value in some situations when clicked
+- fixed panel not refreshing on open when it was already selected ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/82]#82[/url])
+- added RefreshPanel function to panel control ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/84]#84[/url])
+[INDENT]- the panel control is returned by RegisterAddonPanel[/INDENT]
+- added "translation", "feedback" and "donation" properties to panel ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/88]#88[/url], thanks Baertram)
+[INDENT]- all three (and also the "website" property) accept a function or a string[/INDENT]
+- added "disabled" and "disabledLabel" property for submenus ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/86]#86[/url], [url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/90]#90[/url], thanks klingo)
+- added "icon" and "iconTextureCoords" property for submenus ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/91]#91[/url])
+- added "disabled" property for descriptions ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/89]#89[/url], thanks klingo)
+- added "clampFunction" property for slider controls ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/85]#85[/url])
+[INDENT]- the function receives the value, min and max as arguments and has to return a clamped value[/INDENT]
+- added optional support for LibDebugLogger
+[INDENT]- in case it is loaded, it logs the full error when control creation failed[/INDENT]
+- updated LibStub to r5
+
+2.0 r26
+- fixed error when loading LAM on an unsupported locale
+- added Korean translation (thanks p.walker)
+- added Brazilian translation (thanks mlsevero)
+
+2.0 r25
+- fixed tooltips not working for entries in scrollable dropdown controls ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/78]#78[/url], thanks kyoma)
+- fixed standalone LAM not loading as expected when LAM is bundled with the manifest included ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/81]#81[/url])
+- fixed slashcommands not opening the correct panel on first attempt after UI load ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/79]#79[/url])
+- fixed an error when opening the addon settings menu after Clockwork City update ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/80]#80[/url], thanks Gandalf)
+
+2.0 r24
+- added scrollable property for dropdown controls ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/71]#71[/url], [url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/75]#75[/url], thanks kyoma)
+- added Italian translation ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/70]#70[/url], thanks JohnnyKing94)
+- added Polish translation ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/73]#73[/url], [url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/74]#74[/url], thanks EmiruTegryfon)
+- updated Spanish translation (thanks TERAB1T)
+- updated Russian translation (thanks Morganlefai and Kwisatz)
+- fixed debug code not accepting functions for widget names ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/72]#72[/url], thanks kyoma)
+
+2.0 r23
+- added Chinese translation ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/64]#64[/url], thanks bssthu)
+- added tooltips for dropdown menu entries ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/42]#42[/url])
+- added support for separate values for dropdown menu entries ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/65]#65[/url])
+- added keybind for reset to defaults button ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/68]#68[/url])
+- added requireReload property for input controls ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/47]#47[/url])
+- fixed support for nested submenus ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/61]#61[/url], thanks Baertram)
+- fixed alpha and height not working on divider control ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/69]#69[/url])
+
+2.0 r22
+- fixed mouse exit events for sliders and textures ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/52]#52[/url], thanks silvereyes333)
+- fixed decimal input on sliders ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/54]#54[/url])
+- fixed icon picker not retaining color when disabled is toggled ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/58]#58[/url])
+- fixed slider accepting mouse wheel input while being disabled ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/60]#60[/url])
+- added support for nested submenus ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/53]#53[/url])
+- added new divider widget ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/56]#56[/url], thanks silvereyes333)
+- added new function "UpdateWarning" to controls which allows to refresh the warning text ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/55]#55[/url], thanks silvereyes333)
+- added new property "website" to panels which will render a button in the panel to open the specified addon URL ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/57]#57[/url])
+- updated localization ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/59]#59[/url], thanks everyone who helped with it)
+
+2.0 r21
+- fixed panel creation starting more than once when switching between different addon panels quickly ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/40]#40[/url])
+- fixed LAM.util getting wiped with each version load causing errors for many players ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/44]#44[/url])
+- fixed disabled controls not having the correct label color in some cases ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/41]#41[/url])
+- fixed controls not updating their own disabled state when their value changes ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/51]#51[/url])
+- added Japanese translation (thanks k0ta0uchi) ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/45]#45[/url])
+- added isDangerous flag for button controls ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/50]#50[/url])
+[INDENT]- when set to true it changes the text color of the button to red and opens a dialog which shows the label and the warning text before running the callback[/INDENT]
+- added new options for sliders and fixed some bugs ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/49]#49[/url])
+[INDENT]- autoSelect (boolean): when set to true it makes the input field select all text when it gains focus
+- inputLocation (string): setting it to "right" will move the input field to the right side of the slider and make it slightly bigger. For aesthetic reasons this should only be used in custom panels and not in the addon menu
+- clampInput (boolean): true by default and if set to false it allows the input values of the slider to exceed the min and max value[/INDENT]
+- for other internal code changes take a look at the [URL="https://github.com/sirinsidiator/ESO-LibAddonMenu/commits/master"]git history[/URL]
+
+2.0 r20
+- fixed empty panels not firing LAM-PanelControlsCreated ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/32]#32[/url])
+- removed height constraint of 2500 from submenus ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/34]#34[/url])
+- added two new callbacks LAM-PanelOpened and LAM-PanelClosed. Both pass the panel as their sole argument ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/27]#27[/url])
+- 'default' can now be a function in addition to a static value ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/23]#23[/url])
+- all labels (name, tooltip, warning, etc.) can now be a string id or function in addition to a static string ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/issues/22]#22[/url])
+- updated LibStub to r4
+
+2.0 r19
+- made icon picker choicesTooltips array optional
+- added support for custom panel objects without a GetWidth method (partially fixes [url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/26]#26[/url])
+- fixed controls not refreshing correctly when they are initialized with a boolean "false" on the disabled property ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/35]#35[/url], thanks Randactyl)
+- removed height constraint on the description control ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/36]#36[/url], thanks KuroiLight)
+- added "isExtraWide" property to editboxes, allowing them to utilize more space ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/37]#37[/url], thanks KuroiLight)
+- added "decimals" property to sliders to allow rounding values to x decimals ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/38]#38[/url], implements [url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/21]#21[/url], thanks KuroiLight)
+- added mousewheel support for sliders ([url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/39]#39[/url], implements [url=https://github.com/sirinsidiator/ESO-LibAddonMenu/pull/30]#30[/url], thanks KuroiLight)
+
+2.0 r18
+- major overhaul of the addon menu style (thanks votan & merlight)
+[INDENT][COLOR="Gray"]- NOTE: the menu is now a bit wider than before, if you created custom elements you might need to update them accordingly[/COLOR][/INDENT]
+- added search box to addon list (thanks votan & merlight)
+- new icon picker widget
+- removed micro freeze when opening a menu with many options for the first time
+- changed tooltip property to accept functions that return a string (thanks Ayantir)
+- changed the label on the defaults button and menu to avoid a grammar mistake in the french localization (thanks Ayantir)
+- updated LibStub to r3 (support for '.' in minor version string, e.g. "17.5")
+
+2.0 r17
+- updated for changes in 100011
+- fixed OpenToPanel function
+- fixed possible error with combobox names
+- half width control no longer have a fixed height and instead scale automatically now
+- changed controls to no longer use top level windows
+- fixed problems with the loading order and added warning if an old version gets initialized first
+A big thank you to everyone who helped making these changes, especially votan, merlight and Garkin!
+
+2.0 r16
+- updated for changes in 100010
+- thanks to Garkin for alerting me of changes needed and for testing on the test server
+- Spanish support added, translation provided by Luisen75 for their Spanish project
+
+2.0 r14
+- fixed bug where the LAM-RefreshPanel callback was being registered with CALLBACK_MANAGER multiple times
+- fixed highlighting of entries in the game Settings menu (Addon Settings now properly highlights and other entries go back to normal)
+
+2.0 r13
+- one last bug ran out from anunder the dresser - I smashed it hopefully!
+
+2.0 r12
+- fix one bug another shows up...
+
+2.0 r11
+- don't overwrite widgets list if table already exists (in case an external lib or addon registers a new widget type)
+- headers, descriptions, submenus and custom widgets now have the ability to update their text when the panel and other controls refresh (simply change the name/text in the controlData table)
+- custom controls now have the ability to refresh with other controls and your panel - there is a new optional field in the data table called refreshFunc (when the panel refreshes, this function will be called)
+
+2.0 r10
+- fixed display of warning icon for dropdown controls
+- update LibStub.lua
+
+2.0 r9
+- added Russian locale support for RuESO project
+- fixed anchoring issue with addon list (addon names are now properly in the scroll frame, so the few of you with tons installed should have no issue any longer)
+- added ability to close submenus from the bottom of the submenu (there is a small strip along the bottom of the submenu that is clickable)
+- edited each control to better support custom-created UIs via LAM and the parent passed through to the create functions
+
+2.0 r8
+- changed border texture around panel and addon list
+- expanded maximum size of submenus from 1500 to 2500
+
+2.0 r7
+- shortened game menu entry for French and German localizations (so the text doesn't get cut off)
+- fixed checkbox label coloring bug (when a checkbox that is set to "off" is re-enabled by another setting)
+- fixed multi-line editbox bug (where text didn't display)
+- added mousewheel scrolling for multi-line editboxes
+
+2.0 r6
+- added "LAM-PanelControlsCreated" callback when you panel has been shown for the first time and your controls have now been created
+- fixed duplicate Addon Settings panels when you have a newer version of LAM overwriting an older version
+- finished localizing stuff that wasn't localized yet
+- added "sort" field to dropdown control
+
+2.0 r5
+- fix RefreshPanel function so that all controls now update
+- add RefreshPanel call to ForceDefaults function
+
+2.0 r4
+- fix for me being an idiot. Sorry guys ><
+
+2.0 r3
+- fixed checkboxes making a sound when just refreshing
+- fixed error when the lib is loaded standalone, but no addons are registered with it
+- fixed error when LAM updates itself to a newer version (won't try to create two of the same frame)
+
+2.0 r2
+- LAM-2.0 is now released!  See http://www.esoui.com/portal.php?&id=5&pageid=10 for a list of differences between LAM1 and LAM2, as well as a guide for usage and the library's docs
+
+-----------------
+1.0 r8
+- updated APIVersion to 100004
+- changed submenu so scroll bar doesn't overlap contents
+- submenu should hopefully no longer occasionally show up behind the options panel
+
+1.0 r7
+- the defaults button now properly hides for each panel (Note: the keybind still works, I can't seem to get rid of that, but at least the prompt is hidden now)
+- LAM now supports sub menus! See the description page for docs on usage
+
+1.0 r6
+- copy/paste fail when changing the name of an arg.  Description titles will no longer hide from you.
+
+1.0 r5
+- exposed the widgets created via return
+
+1.0 r4
+-new widget: Description
+
+1.0 r3
+-fixed error with color picker in new patch
+
+1.0 r2
+-fixed bug when more than one addon panel is created
