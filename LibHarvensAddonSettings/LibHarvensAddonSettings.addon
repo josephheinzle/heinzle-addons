@@ -1,0 +1,17 @@
+; This Add-on is not created by, affiliated with or sponsored by ZeniMax
+; Media Inc. or its affiliates. The Elder Scrolls and related logos are
+; registered trademarks or trademarks of ZeniMax Media Inc. in the United
+; States and/or other countries. All rights reserved.
+
+## Title: LibVotans
+## Author: Harven, Votan, Scribe Rob (Console Support)
+## AddOnVersion: 20103
+## Version: 2.1.2
+## APIVersion: 101047 101048
+## IsLibrary: true
+## Description: With this addon you can add your addon settings to the main Settings menu; please remove any instances of LibHarvensAddonSettings as this version replaces it and keeping both may cause conflicts.
+
+Main.lua
+
+Console\Controls.xml
+Console\Settings.lua
