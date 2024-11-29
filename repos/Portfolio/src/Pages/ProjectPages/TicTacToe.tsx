@@ -2,8 +2,12 @@ import * as React from "react";
 import * as Types from "../../../Types";
 import { TicTacToeDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
+import { useEffect } from "react";
 
 const TicTacToe = (props: Types.TicTacToeProps) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="my-4">
       <h1 className="text-center">Tic Tac Toe Lab</h1>

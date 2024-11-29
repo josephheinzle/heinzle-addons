@@ -1,8 +1,12 @@
 import * as React from "react";
+import { useEffect } from "react";
 import * as Types from "../../../Types";
 import { GundamGetterDetails } from "../../ProjectInfo";
 
 const GundamGetter = (props: Types.GundamGetterProps) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="my-4">
       <h1 className="text-center">Gundam Getter</h1>
