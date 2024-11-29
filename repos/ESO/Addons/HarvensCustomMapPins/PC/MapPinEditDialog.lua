@@ -56,17 +56,6 @@ function Dialog:GetData(userData)
 end
 
 function Dialog:SetupDialog(dialog, data)
-	if not dialog or not data then
-		return
-	end
-	if not dialog.iconsInitialized then
-		self.scrollList:ClearGridList()
-		for i = 1, #HarvensCustomMapPinsIconList do
-			self.scrollList:AddEntry({filename = HarvensCustomMapPinsIconList[i], index = i}, "ZO_GuildRank_RankIconPickerIcon_Keyboard_Control")
-		end
-		self.scrollList:CommitGridList()
-		dialog.iconsInitialized = true
-	end
 	local function predefinedSelected(...)
 		self:PredefinedSelected(...)
 	end
@@ -86,6 +75,7 @@ function Dialog:SetupDialog(dialog, data)
 		dropdown:SetSelectedItem(data.predefined)
 		self.predefinedNameEdit:SetText(data.predefinedName)
 		self.scrollList:SetSelectedDataIndex(data.icon or 1)
+		self.scrollList:RefreshVisible()
 	else
 		if data.edit and data.pin then
 			dialog.info.title.text = GetString(SI_HARVEN_CMP_TITLE_REPLACE)
@@ -119,7 +109,7 @@ function Dialog:SetupDialog(dialog, data)
 				self.colorTexture:SetColor(HarvensCustomMapPins:GetColor(data.color):UnpackRGBA())
 			end
 			self.scrollList:SetSelectedDataIndex(data.icon or 1)
-			self.scrollList:RefreshGridList()
+			self.scrollList:RefreshVisible()
 		end
 	end
 end
@@ -184,7 +174,7 @@ function Dialog:PredefinedSelected(combobox, name, item)
 	end
 	self.colorTexture:SetColor(HarvensCustomMapPins:GetColor(item.data.color):UnpackRGBA())
 	self.scrollList:SetSelectedDataIndex(item.data.icon)
-	self.scrollList:RefreshGridList()
+	self.scrollList:RefreshVisible()
 end
 
 function Dialog:RebuildPredefined()
@@ -237,37 +227,8 @@ function Dialog:Initialize(control, sv)
 	self.predefinedNameEdit = GetControl(content, "PredefinedName")
 	self.iconChooser = GetControl(content, "Icon")
 	self.deleteButton = GetControl(content, "PredefinedDelete")
-	local iconPickerControl = GetControl(self.iconChooser, "Picker")
-	self.scrollList = ZO_GridScrollList_Keyboard:New(iconPickerControl)
-	local function iconPickerEntrySetup(control, item)
-		local function OnClick()
-			self.scrollList.list.selectedData = item
-			self.scrollList:RefreshGridList()
-		end
+	local scrollList = GetControl(self.iconChooser, "Scroll")
 
-		local iconContainer = control:GetNamedChild("IconContainer")
-		local checkButton = iconContainer:GetNamedChild("Frame")
-
-		local selectedData = self.scrollList:GetSelectedData()
-		local isSelected = selectedData and selectedData.index == item.index or false
-
-		iconContainer:GetNamedChild("Icon"):SetTexture(item.filename)
-		ZO_CheckButton_SetCheckState(checkButton, isSelected)
-		ZO_CheckButton_SetToggleFunction(checkButton, OnClick)
-	end
-	self.scrollList:AddEntryTemplate("ZO_GuildRank_RankIconPickerIcon_Keyboard_Control", 60, 60, iconPickerEntrySetup, nil, nil, 0, 0)
-
-	function self.scrollList:GetSelectedData()
-		return self.list.selectedData
-	end
-	function self.scrollList:SetSelectedDataIndex(index)
-		local data = self:GetData()
-		data = (data[index] or data[1]).data
-		self.list.selectedData = data
-		local NO_CALLBACK = nil
-		local ANIMATE_INSTANTLY = true
-		self:ScrollDataToCenter(data, NO_CALLBACK, ANIMATE_INSTANTLY)
-	end
 	--self:RebuildPredefined()
 
 	self.deleteButton:SetHandler(
@@ -276,6 +237,14 @@ function Dialog:Initialize(control, sv)
 			self:DeletePredefined(...)
 		end
 	)
+
+	self.scrollList = ZO_HorizontalScrollList:New(scrollList, "HarvensCustomMapPinsIcon", 5, SetupIcon)
+	self.scrollList:SetScaleExtents(.6, 1)
+	self.scrollList:Clear()
+	for i = 1, #HarvensCustomMapPinsIconList do
+		self.scrollList:AddEntry({filename = HarvensCustomMapPinsIconList[i], index = i})
+	end
+	self.scrollList:Commit()
 
 	local advanced = GetControl(content, "Advanced")
 	ZO_CheckButton_SetLabelText(advanced, GetString(SI_HARVEN_CMP_ADVANCED_OPTIONS))
