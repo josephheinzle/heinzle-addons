@@ -39,8 +39,6 @@ local getZoneName
 ------------------------------------------------------------------------
 local checkIfLanguageIsSupported = lib.checkIfLanguageIsSupported
 
-local formattedZoneStr = "%s|caaaaaa - %s"
-
 ------------------------------------------------------------------------
 -- 	Library - Chat autocomplete functions (using LibSlashCommander)
 ------------------------------------------------------------------------
@@ -51,7 +49,7 @@ local formattedZoneStr = "%s|caaaaaa - %s"
 --After that a space or press the auto completion key TABULATOR to see a list of the translated zone namesof other languages.
 --Selecting an entry will take this translated zone name to your chat's editbox.
 function lib:buildAutoComplete(command, langToUse)
-    if lib.LSC == nil then return nil end
+    if self.LSC == nil then return nil end
     if command == nil or not checkIfLanguageIsSupported(langToUse) then return end
 
     local blacklistedZoneIdsForAutoCompletion = lib.blacklistedZoneIdsForAutoCompletion
@@ -59,11 +57,11 @@ function lib:buildAutoComplete(command, langToUse)
     getZoneName = getZoneName or lib.GetZoneName
 
     --Add sub commands for the zoneNames
-    local this = lib
-    local localizedZoneDataForLang = lib.preloadedZoneNames[langToUse]
+    local this = self
+    local localizedZoneDataForLang = self.preloadedZoneNames[langToUse]
     if localizedZoneDataForLang ~= nil then
         local MyAutoCompleteProvider = {}
-        MyAutoCompleteProvider = lib.LSC.AutoCompleteProvider:Subclass()
+        MyAutoCompleteProvider = self.LSC.AutoCompleteProvider:Subclass()
         function MyAutoCompleteProvider:New(resultList, lookupList, lang)
             local obj = this.LSC.AutoCompleteProvider.New(self)
             obj.resultList = resultList
@@ -82,7 +80,6 @@ function lib:buildAutoComplete(command, langToUse)
 
         local repStr = "·"
         local langUpper = translations[langToUse][langToUse]
-        local supportedLanguages = lib.supportedLanguages
         for zoneId, zoneName in pairs(localizedZoneDataForLang) do
             --Check if the zoneIds are blacklisted
             local isZoneBlacklisted = blacklistedZoneIdsForAutoCompletion[zoneId] or false
@@ -104,7 +101,7 @@ function lib:buildAutoComplete(command, langToUse)
                     local otherLanguagesNoDuplicateZoneName = {} -- Only a temp table
                     local alreadyAddedCleanTranslatedZoneNames = {} -- The resultsList for the autocomplete provider
                     local alreadyAddedCleanTranslatedZoneNamesLookup = {} -- The lookupList for the autocomplete provider
-                    for langIdx, lang in ipairs(supportedLanguages) do
+                    for langIdx, lang in ipairs(self.supportedLanguages) do
                         local otherLanguageZoneName = getZoneName(lib, zoneId, lang)
                         if otherLanguageZoneName ~= nil and otherLanguageZoneName ~= "" then
                             otherLanguagesZoneName[langIdx] = otherLanguageZoneName
@@ -113,7 +110,7 @@ function lib:buildAutoComplete(command, langToUse)
                     if #otherLanguagesZoneName >= 1 then
                         local langStr = ""
                         for langIdx, cleanTranslatedZoneName in ipairs(otherLanguagesZoneName) do
-                            local lang = supportedLanguages[langIdx]
+                            local lang = self.supportedLanguages[langIdx]
                             local upperLangStr = translations[langToUse][lang]
                             if otherLanguagesNoDuplicateZoneName[cleanTranslatedZoneName] == nil then
                                 langStr = ""
@@ -128,7 +125,7 @@ function lib:buildAutoComplete(command, langToUse)
                             otherLanguagesNoDuplicateZoneName[cleanTranslatedZoneName] = langStr
                         end
                         for cleanTranslatedZoneNameLoop, langStrLoop in pairs(otherLanguagesNoDuplicateZoneName) do
-                            local label = string.format(formattedZoneStr, cleanTranslatedZoneNameLoop, langStrLoop)
+                            local label = string.format("%s|caaaaaa - %s", cleanTranslatedZoneNameLoop, langStrLoop)
                             alreadyAddedCleanTranslatedZoneNames[zo_strlower(cleanTranslatedZoneNameLoop)] = label
                             alreadyAddedCleanTranslatedZoneNamesLookup[label] = cleanTranslatedZoneNameLoop
                         end
@@ -144,19 +141,19 @@ end
 --If LibSlashCommander is present and activated: Build the auto completion entries for each supported language (/lzt<language>) + 1 major slash command (/lzt)
 function lib:buildLSCZoneSearchAutoComplete()
     --Get/Create instance of LibSlashCommander
-    if lib.LSC == nil then
+    if self.LSC == nil then
         SLASH_COMMANDS["/lzt"] = function() d("[\'" .. libZone.name .. "\'] " .. translations[self.currentClientLanguage]["libSlashCommanderMissing"]) end
         return nil
     end
     local libName = "[" .. libZone.name .."]"
-    lib.commandsLzt = {}
-    lib.commandsLzt["all"] = lib.LSC:Register({"/lzt", "/transz"}, nil, libName .. translations[lib.currentClientLanguage]["slashCommandDescriptionClient"])
-    lib:buildAutoComplete(lib.commandsLzt["all"], lib.currentClientLanguage)
-    for _,lang in pairs(lib.supportedLanguages) do
+    self.commandsLzt = {}
+    self.commandsLzt["all"] = self.LSC:Register({"/lzt", "/transz"}, nil, libName .. translations[self.currentClientLanguage]["slashCommandDescriptionClient"])
+    self:buildAutoComplete(self.commandsLzt["all"], self.currentClientLanguage)
+    for _,lang in pairs(self.supportedLanguages) do
         local transForLang = translations[tostring(lang)]
         if transForLang~= nil and transForLang["slashCommandDescription"] ~= nil then
-            lib.commandsLzt[tostring(lang)] = lib.LSC:Register({"/lzt" .. tostring(lang), "/transz" .. tostring(lang)}, nil, libName .. translations[tostring(lang)]["slashCommandDescription"])
-            lib:buildAutoComplete(lib.commandsLzt[tostring(lang)], tostring(lang))
+            self.commandsLzt[tostring(lang)] = self.LSC:Register({"/lzt" .. tostring(lang), "/transz" .. tostring(lang)}, nil, libName .. translations[tostring(lang)]["slashCommandDescription"])
+            self:buildAutoComplete(self.commandsLzt[tostring(lang)], tostring(lang))
         end
     end
 end

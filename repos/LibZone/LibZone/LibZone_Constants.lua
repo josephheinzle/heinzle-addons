@@ -31,7 +31,7 @@
 local libZone = {}
 --Addon/Library info
 libZone.name                    = "LibZone"
-libZone.version                 = 8.95
+libZone.version                 = 8.4
 libZone.author                  = "Baertram"
 libZone.url                     = "https://www.esoui.com/downloads/info2171-LibZone.html"
 
@@ -39,10 +39,8 @@ libZone.url                     = "https://www.esoui.com/downloads/info2171-LibZ
 libZone.svDataName              = "LibZone_SV_Data"
 libZone.svLocalizedDataName     = "LibZone_Localized_SV_Data"
 libZone.svGeoDebugDataName		= "LibZone_GeoDebug_SV_Data"
-libZone.svDebugDataName		    = "LibZone_Debug_SV_Data"
 libZone.svVersion               = libZone.version -- Changing this will reset the SavedVariables!
 libZone.svDataTableName         = "ZoneData"
-libZone.svMissingZoneDataTableName = "MissingZoneData"
 
 local libraryName = libZone.name
 local clientLang = GetCVar("language.2")
@@ -139,19 +137,19 @@ local translations = {
         ["libSlashCommanderMissing"] = "¡Instala la biblioteca 'LibSlashCommander'!",
         ["LibraryAlreadyLoaded"]            = "¡La biblioteca \'%s\' ya se ha cargado!",
     },
-    ["zh"] = { --by Lykeion, 2024029
-        ["de"]  = "德文",
-        ["en"]  = "英文",
-        ["fr"]  = "法文",
-        ["jp"]  = "日文",
-        ["ru"]  = "俄文",
-        ["pl"]  = "波兰文",
-        ["es"]  = "西班牙文",
-        ["zh"]  = "中文",
-        ["slashCommandDescription"] = "搜索区域名称的翻译",
-        ["slashCommandDescriptionClient"] = "搜索区域名称 (游戏客户端语言)",
-        ["libSlashCommanderMissing"] = "请安装运行库 'LibSlashCommander'!",
-        ["LibraryAlreadyLoaded"]            = "运行库 \'%s\' 已加载!",
+    ["zh"] = {
+        ["de"]  = "German",
+        ["en"]  = "English",
+        ["fr"]  = "French",
+        ["jp"]  = "Japanese",
+        ["ru"]  = "Russian",
+        ["pl"]  = "Polish",
+        ["es"]  = "Spanish",
+        ["zh"]  = "Chinese",
+        ["slashCommandDescription"] = "Search translations of zone names",
+        ["slashCommandDescriptionClient"] = "Search zone names (game client language)",
+        ["libSlashCommanderMissing"] = "Please install library 'LibSlashCommander'!",
+        ["LibraryAlreadyLoaded"]            = "Library \'%s\' has already been loaded!",
     },
 
     --Special client languages
