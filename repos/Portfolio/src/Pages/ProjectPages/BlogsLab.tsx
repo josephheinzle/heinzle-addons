@@ -2,8 +2,13 @@ import * as React from "react";
 import * as Types from "../../../Types";
 import { BlogsLabDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
+import { useEffect } from "react";
 
 const BlogsLab = (props: Types.BlogsLabProps) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="my-4">
       <h1 className="text-center">Blogs Lab</h1>
