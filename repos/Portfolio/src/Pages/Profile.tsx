@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Types from "../../Types";
 import { useNavigate } from "react-router-dom";
 
-const Profile = (props: Types.ProfileProps) => {
+const Profile = (props: Types.NO_PROPS) => {
   const nav = useNavigate();
 
   return (

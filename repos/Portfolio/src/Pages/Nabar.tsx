@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Types from "../../Types";
 // import { ProjectArray } from "../ProjectInfo";
 
-const Navbar = (props: Types.NavbarProps) => {
+const Navbar = (props: Types.NO_PROPS) => {
   const loc = useLocation();
   const nav = useNavigate();
   // const pageURLs = ProjectArray.map((proj) => ({ URL: proj.pageURL, title: proj.title }));

@@ -2,9 +2,13 @@ import * as React from "react";
 import * as Types from "../../Types";
 import { ProjectArray } from "../ProjectInfo";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
-const MainPage = (props: Types.MainPageProps) => {
+const MainPage = (props: Types.NO_PROPS) => {
   const nav = useNavigate();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const projectsJSX = (isLab: boolean) => {
     return (
       <div>

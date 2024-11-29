@@ -1,10 +1,7 @@
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
 import * as Types from "../../Types";
 
-const Resume = (props: Types.ResumeProps) => {
-  const nav = useNavigate();
-
+const Resume = (props: Types.NO_PROPS) => {
   return (
     <div>
       <div style={{ height: "91vh" }}>
