@@ -120,7 +120,7 @@ function LibQRCode.DrawQRCode(control, data)
 	if control:GetType() ~= CT_TEXTURE then
 		error("Expected a ControlTexture (Type="..CT_TEXTURE.."), but found Type="..control:GetType())
 	end
-	local ok, qr_table = qrcode(data)
+	local ok, qr_table = qrcode(data, 2)
 	if ok then
 		DrawQRCodeWithIndividualTextures(control, qr_table)
 	else
