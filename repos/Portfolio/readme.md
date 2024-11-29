@@ -1,0 +1,1 @@
+I, Eric Moran, am the original author of this portfolio.
