@@ -4,9 +4,6 @@ import * as Types from "../../../Types";
 import { GundamGetterDetails } from "../../ProjectInfo";
 
 const GundamGetter = (props: Types.NO_PROPS) => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   return (
     <div className="my-4">
       <h1 className="text-center">Gundam Getter</h1>
