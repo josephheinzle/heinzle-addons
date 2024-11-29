@@ -1166,10 +1166,11 @@ local function OnLibraryLoaded(event, name)
         -->Will be enriched within function getAllZoneDataById too, if any zoneIds are missing in SV table LibZone_SV_Data
         checkLanguagesZoneDataAndTransferFromSavedVariables()
 
-        --Build the LibSlashCommander autocomplete stuff, if LibSlashCommander is present and activated
+        --Optional: Build the LibSlashCommander autocomplete stuff, if LibSlashCommander is present and activated
         -->See file LibZone_AutoCompletion.lua
-        lib.LSC = lib.LSC or LibSlashCommander
-        lib:buildLSCZoneSearchAutoComplete()
+        if not IsConsoleUI() then --Do not load on Consoles
+            lib:buildLSCZoneSearchAutoComplete()
+        end
     end
 end
 
