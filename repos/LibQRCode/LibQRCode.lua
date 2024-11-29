@@ -46,6 +46,29 @@ local function GetPixelSize(parentX, parentY, rowcount, colcount)
 	return math.min(pxX, pxY)
 end
 
+local function GetOrCreatePixelControl(parentControl, pxControlNum, parentCache, cacheSize, pxSize)
+	local px = nil
+	if pxControlNum <= cacheSize then
+		px = parentCache[pxControlNum]
+	else
+		px = WINDOW_MANAGER:CreateControl(nil, parentControl, CT_TEXTURE)
+		px:SetDrawTier(DT_HIGH)
+		parentCache[pxControlNum] = px
+	end
+	px:SetHidden(false)
+	px:SetDimensions(pxSize, pxSize)
+	return px
+end
+
+function LibQRCode.CreateQRControl(size, data)
+	local control = WINDOW_MANAGER:CreateControl(nil, GuiRoot, CT_TEXTURE)
+	--Draw Tier for the control should be low, we set the background to blank white, then draw the QR Code on top, and the background
+	--acts as a ring of white pixels around the QR Code for ease-of-detection
+	control:SetDrawTier(DT_LOW)
+	control:SetDimensions(size, size)
+	LibQRCode.DrawQRCode(control, data)
+	return control
+end
 
 --Control should be a TextureControl
 --data should be a string
@@ -79,19 +102,10 @@ function LibQRCode.DrawQRCode(control, data)
 		--The table that comes out of qrcode() has columns first instead of rows first.
 		--and yes, this for loop starts with "colnum" not "column".  Col Num.
 		for colnum,col_array in ipairs(qr_table) do
-			for rownum,row in ipairs(col_array) do
-				local px = nil
-				if pxControlNum <= cacheSize then
-					px = parentCache[pxControlNum]
-				else
-					px = WINDOW_MANAGER:CreateControl(nil, control, CT_TEXTURE)
-					px:SetDrawTier(DT_MEDIUM)
-					parentCache[pxControlNum] = px
-				end
+			for rownum,cellValue in ipairs(col_array) do
+				local px = GetOrCreatePixelControl(control, pxControlNum, parentCache, cacheSize, pxSize)
 				
-				px:SetHidden(false)
-				px:SetDimensions(pxSize, pxSize)
-				if row > 0 then
+				if cellValue > 0 then
 					px:SetColor(nil)
 				else
 					px:SetColor(1, 1, 1, 1)
@@ -116,7 +130,8 @@ local function DrawQRCode_Floating(data)
 	if floatingWindow == nil then
 		--Create a basic window to hold the QR code
 		floatingWindow = WINDOW_MANAGER:CreateTopLevelWindow("LibQRCodeWindow")
-		floatingWindow:SetDimensions(200, 200)
+		--these dimensions will make the QRCode a square accounting for the headers and offsets in the window.
+		floatingWindow:SetDimensions(210, 245)
 		floatingWindow:SetAnchor(CENTER)
 		floatingWindow:SetMovable(true)
 		floatingWindow:SetMouseEnabled(true)
@@ -147,15 +162,17 @@ local function DrawQRCode_Floating(data)
 		closeButton:SetMouseOverTexture("EsoUI/Art/Buttons/closebutton_mouseover.dds")
 		closeButton:EnableMouseButton(MOUSE_BUTTON_INDEX_LEFT, true)
 		--Draw the QRCode in a section of the window that doesn't include the close button, but includes the rest of the window below it
-		qrContainer = WINDOW_MANAGER:CreateControl("LibQRCodeDrawing", floatingWindow, CT_TEXTURE)
-		qrContainer:SetAnchor(TOPLEFT, floatingWindow, TOPLEFT, 5, 40)
-		qrContainer:SetAnchor(BOTTOMRIGHT, floatingWindow, BOTTOMRIGHT, -5, -5)
+		
 	else
 		SCENE_MANAGER:ToggleTopLevel(floatingWindow) 
 		floatingWindow:SetHidden(false) 
 	end
 	
-	LibQRCode.DrawQRCode(qrContainer, data)
+	qrContainer = LibQRCode.CreateQRControl(200, data)
+	--WINDOW_MANAGER:CreateControl("LibQRCodeDrawing", floatingWindow, CT_TEXTURE)
+	qrContainer:SetParent(floatingWindow)
+	qrContainer:SetAnchor(TOPLEFT, floatingWindow, TOPLEFT, 5, 40)
+	qrContainer:SetAnchor(BOTTOMRIGHT, floatingWindow, BOTTOMRIGHT, -5, -5)
 end
 
 local function DrawQRCode_FloatingTest(n)
