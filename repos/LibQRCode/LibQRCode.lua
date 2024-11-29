@@ -72,6 +72,7 @@ function LibQRCode.DrawQRCode(control, data)
 		local xOffset = (parentX - (pxSize * colcount)) / 2
 		--set the background to white
 		control:SetColor(1, 1, 1, 1)
+		--keep track of where we are in the cache, so we know if we need to make new Controls or reuse old ones.
 		local pxControlNum = 1
 		local parentCache = GetCacheForParent(parentName)
 		local cacheSize = #parentCache
@@ -111,7 +112,7 @@ function LibQRCode.DrawQRCode(control, data)
 	end
 end
 
-function DrawQRCode_Floating(data)
+local function DrawQRCode_Floating(data)
 	if floatingWindow == nil then
 		--Create a basic window to hold the QR code
 		floatingWindow = WINDOW_MANAGER:CreateTopLevelWindow("LibQRCodeWindow")
@@ -157,7 +158,7 @@ function DrawQRCode_Floating(data)
 	LibQRCode.DrawQRCode(qrContainer, data)
 end
 
-function DrawQRCode_FloatingTest(n)
+local function DrawQRCode_FloatingTest(n)
 	local data = ""
 	for i=1000,1000+n do
 		data = data..i
