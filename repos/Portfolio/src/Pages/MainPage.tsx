@@ -86,7 +86,7 @@ const MainPage = (props: Types.MainPageProps) => {
   };
 
   return (
-    <div className="d-flex row flex-wrap">
+    <div className="d-flex flex-wrap">
       <div className="my-4">
         <h1 className="text-center">Projects</h1>
         {projectsJSX(false)}
