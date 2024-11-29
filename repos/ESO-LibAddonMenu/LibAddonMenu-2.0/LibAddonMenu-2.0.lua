@@ -517,20 +517,11 @@ local localization = {
         RELOAD_DIALOG_RELOAD_BUTTON = "リロード",
         RELOAD_DIALOG_DISCARD_BUTTON = "破棄",
     },
-    zh = { -- provided by Jacko9et
-        PANEL_NAME = GetString(SI_GAME_MENU_ADDONS),
-        AUTHOR = string.format("%s: <<X:1>>", GetString(SI_ADDON_MANAGER_AUTHOR)), -- "Author: <<X:1>>"
+    zh = { -- provided by bssthu
+        PANEL_NAME = "插件",
         VERSION = "版本: <<X:1>>",
         WEBSITE = "访问网站",
-        FEEDBACK = GetString(SI_CUSTOMER_SERVICE_SUBMIT_FEEDBACK),
-        TRANSLATION = GetString(SI_ENCHANTING_TRANSLATION_HEADER),
-        DONATION = "捐赠",
-        PANEL_INFO_FONT = "$(CHAT_FONT)|14|soft-shadow-thin",
-        RELOAD_UI_WARNING = "对此设置的更改需要重新加载界面才能生效。",
-        RELOAD_DIALOG_TITLE = "需要重新加载界面",
-        RELOAD_DIALOG_TEXT = "某些更改需要重新加载界面才能生效。您想现在重新加载还是放弃更改？",
-        RELOAD_DIALOG_RELOAD_BUTTON = GetString(SI_ADDON_MANAGER_RELOAD),
-        RELOAD_DIALOG_DISCARD_BUTTON = GetString(SI_CHAMPION_SYSTEM_DISCARD_CHANGES),
+        PANEL_INFO_FONT = "EsoZh/fonts/univers57.otf|14|soft-shadow-thin",
     },
     pl = { -- provided by EmiruTegryfon
         PANEL_NAME = "Dodatki",
@@ -1039,10 +1030,6 @@ end
 -- panelData = table; data object for your panel - see controls\panel.lua
 function lam:RegisterAddonPanel(addonID, panelData)
     CheckSafetyAndInitialize(addonID)
-    if IsConsoleUI() then
-        lam:registerConsoleAddonPanel(addonID, panelData)
-        return
-    end
     local container = lam:GetAddonPanelContainer()
     local panel = lamcc.panel(container, panelData, addonID) --addonID==global name of panel
     panel:SetHidden(true)
@@ -1087,9 +1074,6 @@ end
 -- addonID = "string"; the same string passed to :RegisterAddonPanel
 -- optionsTable = table; the table containing all of the options controls and their data
 function lam:RegisterOptionControls(addonID, optionsTable) --optionsTable = {sliderData, buttonData, etc}
-    if IsConsoleUI() then
-        lam:registerConsoleOptionControls(addonID, optionsTable)
-    end
     addonToOptionsMap[addonID] = optionsTable
 end
 
@@ -1453,168 +1437,4 @@ function lam:GetAddonSettingsFragment()
         CreateAddonSettingsMenuEntry()
     end
     return LAMAddonSettingsFragment
-end
-
-
-------------------------------------------
--- Temporary LAM to LHAS console converter
-------------------------------------------
-
-local function addToControlTable(newOption, t)
-    t.indexed[#t.indexed + 1 ] = newOption
-    if newOption.label then
-        t.nameMap[newOption.label] = newOption
-    end
-    newOption.conversionIndex = #t.indexed
-end
-local function LAMtoHASDropdownConverter(option, controlTable)
-    local newOption = {
-        type = LibHarvensAddonSettings.ST_DROPDOWN,
-        label = option.name,
-        default = option.default,
-        -- setFunction = option.setFunc,
-        getFunction = option.getFunc,
-        tooltip = option.tooltip,
-        disable = option.disabled,
-    }
-
-    newOption.setFunction = function(combobox, name, item) option.setFunc(item.data) end
-    
-    local items = {}
-    local labelMap = {}
-    if not option.choicesValues then
-        option.choicesValues = option.choices
-    end
-    for i = 1, # option.choices do
-        items[i] = {name = option.choices[i], data = option.choicesValues[i]}
-        if option.choicesValues[i] then
-            labelMap[items[i].data] = items[i].name
-        end
-    end
-    newOption.items = items
-    newOption.getFunction = function() return labelMap[option.getFunc()]  end
-    addToControlTable(newOption, controlTable)
-end
-
-local function LamtoHASSubmenuConverter(optionsTable, controlTable)
-    local newOption = {
-        type = LibHarvensAddonSettings.ST_SECTION,
-        label = optionsTable.name,
-    }
-    addToControlTable(newOption, controlTable)
-    return lam:convertLamOptionsToHasTable(optionsTable.controls, controlTable)
-end
-
-local function LamToHASDescriptionConverter(entry, controlTable)
-    
-    local newOption = {
-        type = LibHarvensAddonSettings.ST_LABEL,
-        label = entry.title,
-        default = entry.default,
-        tooltip = entry.tooltip,
-    }
-    addToControlTable(newOption, controlTable)
-    newOption = {
-        type = LibHarvensAddonSettings.ST_LABEL,
-        label = entry.text,
-        default = entry.default,
-        tooltip = entry.tooltip,
-    }
-    addToControlTable(newOption, controlTable)
-end
-
-local function LamToHASDividerConverter(entry, controlTable)
-    local newOption = {
-        type = LibHarvensAddonSettings.ST_SECTION,
-        label = nil,
-    }
-    addToControlTable(newOption, controlTable)
-end
-
-function lam:convertLamOptionsToHasTable(optionsTable, controlTable)
-    if not LibHarvensAddonSettings then return end
-    local LAMtoHAS = {
-        slider = LibHarvensAddonSettings.ST_SLIDER,
-        header = LibHarvensAddonSettings.ST_SECTION,
-        checkbox = LibHarvensAddonSettings.ST_CHECKBOX,
-        colorpicker = LibHarvensAddonSettings.ST_COLOR,
-        button = LibHarvensAddonSettings.ST_BUTTON,
-        editbox = LibHarvensAddonSettings.ST_EDIT,
-    }
-    local LAMtoHASSpecial = {
-        dropdown = LAMtoHASDropdownConverter,
-        submenu = LamtoHASSubmenuConverter,
-        description = LamToHASDescriptionConverter,
-        divider = LamToHASDividerConverter,
-    }
-    local controlTable = controlTable or {
-        indexed = {},
-        nameMap = {},
-    }
-    
-    -- LAMHASMissing = {}
-    
-    for i, entry in ipairs(optionsTable) do
-        local newType = LAMtoHAS[entry.type]
-        if newType and not entry.isPCOnly then
-            local newOption = {
-                type = newType,
-                label = entry.name,
-                default = entry.default,
-                setFunction = entry.setFunc,
-                getFunction = entry.getFunc,
-                tooltip = entry.tooltip,
-                min = entry.min,
-                max = entry.max,
-                step = entry.step,
-                disable = entry.disabled,
-                clickHandler = entry.func,
-                buttonText = entry.name,
-                maxChars = entry.maxChars,
-            }
-            addToControlTable(newOption, controlTable)
-            -- settings:AddSetting(newOption)
-        elseif LAMtoHASSpecial[entry.type] then
-            LAMtoHASSpecial[entry.type](entry, controlTable)
-        else
-           -- LHAS does not have an equivalent for:
-           -- iconPicker
-           -- texture
-        end
-    end
-    return controlTable
-end
-
-lam.LHASConversion = {}
-lam.LHASConversion.settingTables = {}
-lam.LHASConversion.optionControls = {}
-
-function lam:registerConsoleAddonPanel(addonID, panelData)
-    if IsConsoleUI() and LibHarvensAddonSettings then
-        local LHA = LibHarvensAddonSettings
-        local options = {
-            allowDefaults = panelData.registerForDefaults, --will allow users to reset the settings to default values
-            allowRefresh = panelData.registerForRefresh, --if this is true, when one of settings is changed, all other settings will be checked for state change (disable/enable)
-            defaultsFunction = panelData.resetFunc,
-        }
-
-        local settings = LHA:AddAddon(panelData.name, options)
-        lam.LHASConversion.settingTables[addonID] = settings
-    end
-end
-
-function lam:registerConsoleOptionControls(addonID, optionsTable)
-    if not IsConsoleUI() or not LibHarvensAddonSettings then
-        return
-    end
-    if lam.LHASConversion.settingTables[addonID] then
-        local settings = lam.LHASConversion.settingTables[addonID]
-        local LHA = LibHarvensAddonSettings
-        lam.LHASConversion.optionControls [addonID]= lam:convertLamOptionsToHasTable(optionsTable)
-        local controlTable = lam.LHASConversion.optionControls[addonID]
-
-        for i = 1, #controlTable.indexed do
-            settings:AddSetting(controlTable.indexed[i])
-        end
-    end
 end
