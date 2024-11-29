@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import * as Types from "../../../Types";
 import { GundamGetterDetails } from "../../ProjectInfo";
 
-const GundamGetter = (props: Types.GundamGetterProps) => {
+const GundamGetter = (props: Types.NO_PROPS) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
