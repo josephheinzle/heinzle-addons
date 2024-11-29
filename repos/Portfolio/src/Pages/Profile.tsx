@@ -2,7 +2,7 @@ import * as React from "react";
 import * as Types from "../../Types";
 import { useNavigate } from "react-router-dom";
 
-const Profile = (props: Types.NO_PROPS) => {
+const Profile = (props: Types.ProfileProps) => {
   const nav = useNavigate();
 
   return (
@@ -11,10 +11,10 @@ const Profile = (props: Types.NO_PROPS) => {
       <hr style={{ width: "50%", height: "5px", margin: "auto" }}></hr>
 
       <div className="d-flex justify-content-center">
-        <div className="col-8">
+        <div className="col-6">
           <div className="card">
             <div className="card-body">
-              {/* <p>(Profile picture coming soon)</p> */}
+              <p>(Profile picture coming soon)</p>
               <h3 className="text-center">About Me</h3>
               <p>Hello! I'm Eric Moran.</p>
               <p>
@@ -34,9 +34,6 @@ const Profile = (props: Types.NO_PROPS) => {
                 a friend who works at Gundam Planet that needed help with their manual release date tracking system. To
                 test my newfound skills, I offered to build an app that would collect release date information for them
                 and update it for them automatically - saving them hours of manual, tedious data entry work every day.
-              </p>
-              {/* here */}
-              <p>
                 This project won't change the world, but it changed their world - and they absolutely loved it. Now
                 they're using my software, and it has made their work life easier while it simultaneously helped me grow
                 as a software developer. It gives me a tremendous amount of joy to know that the work I'm doing is

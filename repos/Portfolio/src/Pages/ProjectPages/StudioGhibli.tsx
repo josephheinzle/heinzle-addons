@@ -2,9 +2,8 @@ import * as React from "react";
 import * as Types from "../../../Types";
 import { StudioGhibliDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
-import { useEffect } from "react";
 
-const StudioGhibli = (props: Types.NO_PROPS) => {
+const StudioGhibli = (props: Types.StudioGhibliProps) => {
   return (
     <div className="my-4">
       <h1 className="text-center">Studio Ghibli Lab</h1>
