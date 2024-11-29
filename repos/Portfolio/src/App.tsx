@@ -21,6 +21,7 @@ const App = (props: Types.NO_PROPS) => {
       window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
   }, [loc.pathname]);
+
   return (
     <>
       <Navbar />
