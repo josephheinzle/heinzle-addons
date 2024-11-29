@@ -8,7 +8,8 @@ const Resume = (props: Types.NO_PROPS) => {
         <iframe
           width="100%"
           height={"100%"}
-          src="https://docs.google.com/document/d/1F7eCqSJMzCzhs6Mq0qkMqSwNJtV2fMwwedde925l4sU/preview"
+          // src="https://docs.google.com/document/d/1F7eCqSJMzCzhs6Mq0qkMqSwNJtV2fMwwedde925l4sU/preview"
+          src="https://docs.google.com/document/d/1ujDqnhHzlhacSWKo-pHKiIywkHiPSF6CjOBfkKkyGA4/preview"
         ></iframe>
       </div>
     </div>
