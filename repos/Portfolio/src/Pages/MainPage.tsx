@@ -70,9 +70,7 @@ const MainPage = (props: Types.NO_PROPS) => {
                   >
                     Details
                   </button>
-                  <a className="btn btn-primary" href={project.gitHubURL} rel="noreferrer" target="_blank">
-                    Git Hub Repo
-                  </a>
+
                   {project.title === "Gundam Getter" ? (
                     ""
                   ) : (
@@ -80,6 +78,10 @@ const MainPage = (props: Types.NO_PROPS) => {
                       Project Site
                     </a>
                   )}
+
+                  <a className="btn btn-primary" href={project.gitHubURL} rel="noreferrer" target="_blank">
+                    Git Hub Repo
+                  </a>
                 </div>
               </div>
             </div>
