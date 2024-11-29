@@ -4,7 +4,7 @@ import { JustMyTypeDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
 import { useEffect } from "react";
 
-const JustMyType = (props: Types.JustMyTypeProps) => {
+const JustMyType = (props: Types.NO_PROPS) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

@@ -4,7 +4,7 @@ import { TicTacToeDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
 import { useEffect } from "react";
 
-const TicTacToe = (props: Types.TicTacToeProps) => {
+const TicTacToe = (props: Types.NO_PROPS) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

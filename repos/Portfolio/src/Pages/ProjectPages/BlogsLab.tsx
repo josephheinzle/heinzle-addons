@@ -4,7 +4,7 @@ import { BlogsLabDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
 import { useEffect } from "react";
 
-const BlogsLab = (props: Types.BlogsLabProps) => {
+const BlogsLab = (props: Types.NO_PROPS) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

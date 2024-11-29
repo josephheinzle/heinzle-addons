@@ -4,7 +4,7 @@ import { IdleGameDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
 import { useEffect } from "react";
 
-const IdleGame = (props: Types.IdleGameProps) => {
+const IdleGame = (props: Types.NO_PROPS) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
