@@ -90,10 +90,9 @@ local function DrawQRCodeWithIndividualTextures(control, qr_table)
 	local pxControlNum = 1
 	local parentCache = GetCacheForParent(parentName)
 	local cacheSize = #parentCache
-	--The table that comes out of qrcode() has columns first instead of rows first.
 	--and yes, this for loop starts with "colnum" not "column".  Col Num.
-	for colnum,col_array in ipairs(qr_table) do
-		for rownum,cellValue in ipairs(col_array) do
+	for rownum,row_array in ipairs(qr_table) do
+		for colnum,cellValue in ipairs(row_array) do
 			if cellValue > 0 then
 				local px = GetOrCreatePixelControl(control, pxControlNum, parentCache, cacheSize, pxSize)
 				px:SetAnchor(TOPLEFT, control, TOPLEFT, xOffset+(rownum-1)*pxSize, yOffset+(colnum-1)*pxSize)
