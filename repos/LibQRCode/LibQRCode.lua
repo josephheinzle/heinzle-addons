@@ -11,6 +11,31 @@ local MAJOR, MINOR = lib.name, lib.version
 local floatingWindow = nil
 local qrContainer = nil
 
+--Since we anticipate needing to draw more than one QRCode between UI Reloads, we'll maintain a cache of which texture controls we've
+--created for which input parent controls.  In this manner, we can have multiple separate QR Codes visible at once if needed, and
+--they'll be tied to a given parent control.  When we generate a new QR code, first look up the parent control by name,
+--if we've used it then grab those controls first, and only create new Controls if the QR Code requires more than what we
+--have available.  Be sure to set unused ones to hidden (e.g. if we previously had a 32x32 matrix, but now we only need a 21x21 matrix,
+--there will be 583 controls left over that we don't want to be visible any longer).
+local controlCache = {}
+--Control is probably a BackdropControl of some kind.
+--data should be a string
+
+local function GetCacheForParent(parentName)
+	local parentCache = nil
+	for key,tab in pairs(controlCache) do
+		if key == parentName then
+			parentCache = tab
+			break
+		end
+	end
+	if parentCache == nil then
+		parentCache = {}
+		controlCache[parentName] = parentCache
+	end
+	return parentCache
+end
+
 --We'd like to leave a border of at least one white "pixel" (however big we decide a pixel is) so that the QRCode can be cleanly detected.  Remove distortion so that if parentX and Y are not the same, we still have square pixels
 local function GetPixelSize(parentX, parentY, rowcount, colcount)
 
@@ -20,146 +45,76 @@ local function GetPixelSize(parentX, parentY, rowcount, colcount)
 	local pxY = parentY / (rowcount+2)
 	
 	--attempt to remove distortion by making the pixels square, simply take the smaller of the two
-	local pxSize = math.min(pxX, pxY)
-	-- round to the nearest multiple of 0.5 that's lower than the computed pixel size
-	-- this will make the pixels square-enough, while also mostly removing distortion from having pixel size values
-	-- that don't align well on pixel boundaries.  We could make this just a pure integer by doing 
-	-- math.floor(math.min(pxX, pxY))
-	-- but for QR Codes with a lot of data in them, that can cause the margins to become much larger than they need to be.
-	return math.floor(pxSize*2)/2 
+	return math.min(pxX, pxY)
 end
 
-function LibQRCode.CreateQRControl(size, data)
-	local control = WINDOW_MANAGER:CreateControl(nil, GuiRoot, CT_TEXTURE)
-	--Draw Tier for the control should be low, we set the background to blank white, then draw the QR Code on top, and the background
-	--acts as a ring of white pixels around the QR Code for ease-of-detection
-	control:SetDrawTier(DT_LOW)
-	control:SetDimensions(size, size)
-	LibQRCode.DrawQRCode(control, data)
-	return control
-end
-
-local function DrawStrip(composite, surfaceNum, left, right, top, bottom)
-	composite:AddSurface(left, right, top, bottom)
-	composite:SetInsets(surfaceNum, left, right, top, bottom)
-	composite:SetColor(surfaceNum, 0, 0, 0, 1) -- black
-end
-
-local function DrawQRCodeWithCompositeTexture(control, qr_table)
-
-	--reuse the container control if we've already created one with the given name.
-	local parentControlName = control:GetName()
-	if parentControlName == nil then
-		parentControlName = "Default"
+function DrawQRCode(control, data)
+	if control:GetType() ~= CT_TEXTURE then
+		error("Expected a ControlTexture (Type="..CT_TEXTURE.."), found Type="..control:GetType())
 	end
-	--use the global WindowManager GetControl() function to avoid issues with duplicate control names.
-	local composite = WINDOW_MANAGER:GetControlByName(parentControlName .. "QRComposite")
-	--if we've already created a composite for this parent, use that, otherwise, create one.
+	local ok, qr_table = qrcode(data)
+	if ok then
+		--what we get back from qrcode() is a two-dimensional array, where each value in the array is either positive or negative.
+		--if it's positive, then the pixel should be black, else the pixel should be white
+		--count the number of rows and columns we have actually gotten
+		local parentName = control:GetName()
+		local colcount = #qr_table
+		local rowcount = #qr_table[1]
+		--d("Generated QRCode has " .. rowcount .. " rows and " .. colcount .. " columns")
+		local parentX, parentY = control:GetDimensions()
+		--place a white border around the QRCode for easy detection
+		local pxSize = GetPixelSize(parentX, parentY, rowcount, colcount)
+		--center the QRCode by adding X or Y offsets, depending on which way we adjust.
+		--the offset should be half the distance that is removed by shrinking whichever dimension(s) we shrank.
 	
-	if composite == nil then
-		--d("Creating new composite")
-		composite = WINDOW_MANAGER:CreateControl(parentControlName .. "QRComposite", control, CT_TEXTURECOMPOSITE)
-	else
-		--d("Found existing composite with ".. composite:GetNumSurfaces() .. " surfaces")
-		composite:ClearAllSurfaces()
-	end
-	composite:SetParent(control)
-	composite:SetDrawTier(control:GetDrawTier())
-	composite:SetDrawLayer(DL_OVERLAY)
-	composite:SetPixelRoundingEnabled(false)
-	--d("Composite has " .. composite:GetNumSurfaces() .. " surfaces")
-	
-	local rowcount = #qr_table
-	local colcount = #qr_table[1]
-	local parentX, parentY = control:GetDimensions()
-	--place a white border around the QRCode for easy detection
-	local pxSize = GetPixelSize(parentX, parentY, rowcount, colcount)
-	--d("QR Pixel Size is " .. pxSize)
-	
-	local yOffset = (parentY - (pxSize * rowcount)) / 2
-	local xOffset = (parentX - (pxSize * colcount)) / 2
-	
-	composite:SetAnchor(TOPLEFT, control, TOPLEFT, xOffset, yOffset)
-	composite:SetAnchor(BOTTOMRIGHT, control, BOTTOMRIGHT, -xOffset, -yOffset)
-	
-	--set the background of the parent control to white
-	control:SetColor(1, 1, 1, 1)
-	
-	local width = composite:GetWidth()
-	local height = composite:GetHeight()
-	--d("Composite Width " .. width .. " and Height " .. height)
-	
-	local surfaceNum = 1
-	--TextureComposite surfaces need to use Insets in order to place them in the CompositeControl correctly
-	--The coordinates of the surface don't particularly seem to matter, but the Insets do.
-
-	--Draw the QR Code's surface textures in Strips, to reduce the number of Surfaces we create and reduce the memory footprint
-	--Whenever we find a black pixel, we set the Left side to that if it's the first black pixel we encounter after a white pixel
-	--and whenever we find a white pixel, we render the strip and reset the Left tracker.
-	for rownum,row_array in ipairs(qr_table) do
-		--the Top inset will be non-negative, just the number of pixels from the Top of the composite
-		local top = ((rownum-1)*pxSize)
-		--The bottom inset will be non-positive, the number of pixels from the Bottom of the Composite
-		--which is just the negation of: (Composite Height) - (the location of the Top inset) - (the size of the pixel)
-		local bottom = top - height + pxSize -- this is just a rearranged version of: -(height - top - pxSize)
-		
-		local left = nil
-		for colnum,cellValue in ipairs(row_array) do
-			if cellValue > 0 then
-				--the Left inset will be non-negative, just the number of pixels from the left side of the Composite
-				--only set the Left value if we haven't started setting it for the current strip.
-				if left == nil then
-					left = ((colnum-1)*pxSize)
+		local yOffset = (parentY - (pxSize * rowcount)) / 2
+		local xOffset = (parentX - (pxSize * colcount)) / 2
+		--set the background to white
+		control:SetColor(1, 1, 1, 1)
+		local pxControlNum = 1
+		local parentCache = GetCacheForParent(parentName)
+		local cacheSize = #parentCache
+		--The table that comes out of qrcode() has columns first instead of rows first.
+		--and yes, this for loop starts with "colnum" not "column".  Col Num.
+		for colnum,col_array in ipairs(qr_table) do
+			for rownum,row in ipairs(col_array) do
+				local px = nil
+				if pxControlNum <= cacheSize then
+					px = parentCache[pxControlNum]
+				else
+					px = WINDOW_MANAGER:CreateControl(nil, control, CT_TEXTURE)
+					px:SetDrawTier(DT_MEDIUM)
+					parentCache[pxControlNum] = px
 				end
 				
-			else
-				--if this should be a white pixel, then draw the strip of black pixels leading up to this white pixel
-				--if left is nil, then it's multiple white pixels in a row.
-				if left ~= nil then
-					--the Right inset will be non-positive, the number of pixels from the right side of the Composite
-					--which is just the negation of: (Composite Width) - (the location of the right side of the left inset)
-					local columnOffset = (colnum-1)*pxSize
-					local right = columnOffset - width -- this is rearranged:  -(width - columnOffset)
-					DrawStrip(composite, surfaceNum, left, right, top, bottom)
-					surfaceNum = surfaceNum + 1
+				px:SetHidden(false)
+				px:SetDimensions(pxSize, pxSize)
+				if row > 0 then
+					px:SetColor(nil)
+				else
+					px:SetColor(1, 1, 1, 1)
 				end
-				left = nil
+				px:SetAnchor(TOPLEFT, control, TOPLEFT, xOffset+(rownum-1)*pxSize, yOffset+(colnum-1)*pxSize)
+				pxControlNum = pxControlNum + 1
 			end
 		end
-		--if we're at the end of the row and we have Left defined (so we have some black pixels)
-		if left ~= nil then
-			local right = 0 --we're at the end of the row, the right inset is just zero
-			DrawStrip(composite, surfaceNum, left, right, top, bottom)
-			surfaceNum = surfaceNum + 1
+		--hide any extra pixel controls
+		for i=pxControlNum+1,#parentCache do
+			local px = parentCache[i]
+			if px then
+				px:SetHidden(true)
+			end
 		end
-	end
-	--d("Rendered QR Code using " .. composite:GetNumSurfaces() .. " surfaces")
-end
-
---Control should be a TextureControl
---data should be a string
-function LibQRCode.DrawQRCode(control, data)
-	if control:GetType() ~= CT_TEXTURE then
-		error("Expected a ControlTexture (Type="..CT_TEXTURE.."), but found Type="..control:GetType())
-	end
-	local ok, qr_table = qrcode(data, 2)
-	if ok then
-		DrawQRCodeWithCompositeTexture(control, qr_table)
 	else
 		d("failed to generate qr code from input data")
 	end
 end
 
-local function DrawQRCode_Floating(data)
-	local defaultTextureSize = 200
-	local defaultHeaderHeight = 30
-	local defaultXInset = 5
-	local defaultYInset = 5
+function DrawQRCode_Floating(data)
 	if floatingWindow == nil then
 		--Create a basic window to hold the QR code
 		floatingWindow = WINDOW_MANAGER:CreateTopLevelWindow("LibQRCodeWindow")
-		--these dimensions will make the QRCode a square accounting for the headers and offsets in the window.
-		floatingWindow:SetDimensions(defaultTextureSize + 2*defaultXInset, defaultTextureSize + defaultHeaderHeight + 3 * defaultYInset)
+		floatingWindow:SetDimensions(200, 200)
 		floatingWindow:SetAnchor(CENTER)
 		floatingWindow:SetMovable(true)
 		floatingWindow:SetMouseEnabled(true)
@@ -168,9 +123,9 @@ local function DrawQRCode_Floating(data)
 		local header = WINDOW_MANAGER:CreateControl("LibQRWindowTitle", floatingWindow, CT_LABEL)
 		header:SetText("LibQRCode")
 		header:SetHorizontalAlignment(TEXT_ALIGN_CENTER)
-		header:SetDimensions(defaultTextureSize, defaultHeaderHeight)
+		header:SetDimensions(200, 30)
 		header:SetColor(0.5, 0.5, 1, 1) -- a nice blue color
-		header:SetAnchor(TOP, floatingWindow, TOP, 0, defaultYInset)
+		header:SetAnchor(TOP, floatingWindow, TOP, 0, 5)
 		header:SetFont("ZoFontAnnounceMedium")
 		--attach a backdrop to make the window easy to move around.
 		local backdrop = WINDOW_MANAGER:CreateControlFromVirtual("LibQRCodeBackdrop", floatingWindow, "ZO_DefaultBackdrop")
@@ -178,8 +133,8 @@ local function DrawQRCode_Floating(data)
 		backdrop:SetDrawTier(DT_LOW)
 		--Make a close button for the window, put it in the top right of the window
 		local closeButton = WINDOW_MANAGER:CreateControl("LibQRCodeCloseButton", floatingWindow, CT_BUTTON)
-		closeButton:SetDimensions(defaultHeaderHeight, defaultHeaderHeight)
-		closeButton:SetAnchor(TOPRIGHT, floatingWindow, TOPRIGHT, defaultXInset, defaultYInset)
+		closeButton:SetDimensions(30, 30)
+		closeButton:SetAnchor(TOPRIGHT, floatingWindow, TOPRIGHT, 5, 5)
 		closeButton:SetHandler("OnClicked", function() 
 			SCENE_MANAGER:ToggleTopLevel(floatingWindow) 
 			floatingWindow:SetHidden(true) 
@@ -190,24 +145,18 @@ local function DrawQRCode_Floating(data)
 		closeButton:SetMouseOverTexture("EsoUI/Art/Buttons/closebutton_mouseover.dds")
 		closeButton:EnableMouseButton(MOUSE_BUTTON_INDEX_LEFT, true)
 		--Draw the QRCode in a section of the window that doesn't include the close button, but includes the rest of the window below it
-		
+		qrContainer = WINDOW_MANAGER:CreateControl("LibQRCodeDrawing", floatingWindow, CT_TEXTURE)
+		qrContainer:SetAnchor(TOPLEFT, floatingWindow, TOPLEFT, 5, 40)
+		qrContainer:SetAnchor(BOTTOMRIGHT, floatingWindow, BOTTOMRIGHT, -5, -5)
 	else
 		SCENE_MANAGER:ToggleTopLevel(floatingWindow) 
 		floatingWindow:SetHidden(false) 
 	end
 	
-	if qrContainer == nil then
-		qrContainer = LibQRCode.CreateQRControl(defaultTextureSize, data)
-	else
-		LibQRCode.DrawQRCode(qrContainer, data)
-	end
-	--WINDOW_MANAGER:CreateControl("LibQRCodeDrawing", floatingWindow, CT_TEXTURE)
-	qrContainer:SetParent(floatingWindow)
-	qrContainer:SetAnchor(TOPLEFT, floatingWindow, TOPLEFT, defaultXInset, defaultHeaderHeight + 2 * defaultYInset)
-	qrContainer:SetAnchor(BOTTOMRIGHT, floatingWindow, BOTTOMRIGHT, -defaultXInset, -defaultYInset)
+	DrawQRCode(qrContainer, data)
 end
 
-local function DrawQRCode_FloatingTest(n)
+function DrawQRCode_FloatingTest(n)
 	local data = ""
 	for i=1000,1000+n do
 		data = data..i
@@ -216,7 +165,7 @@ local function DrawQRCode_FloatingTest(n)
 end
 
 SLASH_COMMANDS["/qrcode"] = DrawQRCode_Floating
---SLASH_COMMANDS["/qrcodetest"] = DrawQRCode_FloatingTest
+SLASH_COMMANDS["/qrcodetest"] = DrawQRCode_FloatingTest
 
 --Addon loaded function
 local function OnLibraryLoaded(event, name)
