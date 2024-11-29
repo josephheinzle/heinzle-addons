@@ -70,57 +70,60 @@ function LibQRCode.CreateQRControl(size, data)
 	return control
 end
 
+local function DrawQRCodeWithIndividualTextures(control, qr_table)
+
+	local parentName = control:GetName()
+	local colcount = #qr_table
+	local rowcount = #qr_table[1]
+	--d("Generated QRCode has " .. rowcount .. " rows and " .. colcount .. " columns")
+	local parentX, parentY = control:GetDimensions()
+	--place a white border around the QRCode for easy detection
+	local pxSize = GetPixelSize(parentX, parentY, rowcount, colcount)
+	--center the QRCode by adding X or Y offsets, depending on which way we adjust.
+	--the offset should be half the distance that is removed by shrinking whichever dimension(s) we shrank.
+
+	local yOffset = (parentY - (pxSize * rowcount)) / 2
+	local xOffset = (parentX - (pxSize * colcount)) / 2
+	--set the background to white
+	control:SetColor(1, 1, 1, 1)
+	--keep track of where we are in the cache, so we know if we need to make new Controls or reuse old ones.
+	local pxControlNum = 1
+	local parentCache = GetCacheForParent(parentName)
+	local cacheSize = #parentCache
+	--The table that comes out of qrcode() has columns first instead of rows first.
+	--and yes, this for loop starts with "colnum" not "column".  Col Num.
+	for colnum,col_array in ipairs(qr_table) do
+		for rownum,cellValue in ipairs(col_array) do
+			if cellValue > 0 then
+				local px = GetOrCreatePixelControl(control, pxControlNum, parentCache, cacheSize, pxSize)
+				px:SetAnchor(TOPLEFT, control, TOPLEFT, xOffset+(rownum-1)*pxSize, yOffset+(colnum-1)*pxSize)
+				px:SetColor(nil)
+				pxControlNum = pxControlNum + 1
+			else
+				--there is no need to draw a white pixel, the background of the QRCode is already white.
+				--px:SetColor(1, 1, 1, 1)
+			end
+			
+		end
+	end
+	--hide any extra pixel controls
+	for i=pxControlNum+1,#parentCache do
+		local px = parentCache[i]
+		if px then
+			px:SetHidden(true)
+		end
+	end
+end
+
 --Control should be a TextureControl
 --data should be a string
 function LibQRCode.DrawQRCode(control, data)
 	if control:GetType() ~= CT_TEXTURE then
-		error("Expected a ControlTexture (Type="..CT_TEXTURE.."), found Type="..control:GetType())
+		error("Expected a ControlTexture (Type="..CT_TEXTURE.."), but found Type="..control:GetType())
 	end
 	local ok, qr_table = qrcode(data)
 	if ok then
-		--what we get back from qrcode() is a two-dimensional array, where each value in the array is either positive or negative.
-		--if it's positive, then the pixel should be black, else the pixel should be white
-		--count the number of rows and columns we have actually gotten
-		local parentName = control:GetName()
-		local colcount = #qr_table
-		local rowcount = #qr_table[1]
-		--d("Generated QRCode has " .. rowcount .. " rows and " .. colcount .. " columns")
-		local parentX, parentY = control:GetDimensions()
-		--place a white border around the QRCode for easy detection
-		local pxSize = GetPixelSize(parentX, parentY, rowcount, colcount)
-		--center the QRCode by adding X or Y offsets, depending on which way we adjust.
-		--the offset should be half the distance that is removed by shrinking whichever dimension(s) we shrank.
-	
-		local yOffset = (parentY - (pxSize * rowcount)) / 2
-		local xOffset = (parentX - (pxSize * colcount)) / 2
-		--set the background to white
-		control:SetColor(1, 1, 1, 1)
-		--keep track of where we are in the cache, so we know if we need to make new Controls or reuse old ones.
-		local pxControlNum = 1
-		local parentCache = GetCacheForParent(parentName)
-		local cacheSize = #parentCache
-		--The table that comes out of qrcode() has columns first instead of rows first.
-		--and yes, this for loop starts with "colnum" not "column".  Col Num.
-		for colnum,col_array in ipairs(qr_table) do
-			for rownum,cellValue in ipairs(col_array) do
-				local px = GetOrCreatePixelControl(control, pxControlNum, parentCache, cacheSize, pxSize)
-				
-				if cellValue > 0 then
-					px:SetColor(nil)
-				else
-					px:SetColor(1, 1, 1, 1)
-				end
-				px:SetAnchor(TOPLEFT, control, TOPLEFT, xOffset+(rownum-1)*pxSize, yOffset+(colnum-1)*pxSize)
-				pxControlNum = pxControlNum + 1
-			end
-		end
-		--hide any extra pixel controls
-		for i=pxControlNum+1,#parentCache do
-			local px = parentCache[i]
-			if px then
-				px:SetHidden(true)
-			end
-		end
+		DrawQRCodeWithIndividualTextures(control, qr_table)
 	else
 		d("failed to generate qr code from input data")
 	end
