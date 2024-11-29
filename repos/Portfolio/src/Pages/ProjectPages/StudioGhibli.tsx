@@ -4,7 +4,7 @@ import { StudioGhibliDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
 import { useEffect } from "react";
 
-const StudioGhibli = (props: Types.StudioGhibliProps) => {
+const StudioGhibli = (props: Types.NO_PROPS) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
