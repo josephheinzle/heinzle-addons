@@ -1,0 +1,190 @@
+<GuiXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sir.insidi.at/or/schema/esoui.xsd">
+  <Controls>
+    <Label name="ESOProfilerLabel" virtual="true" font="$(MEDIUM_FONT)|$(KB_18)|soft-shadow-thin" wrapMode="ELLIPSIS" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" mouseEnabled="false" />
+    <Label name="ESOProfilerNumLabel" virtual="true" inherits="ESOProfilerLabel" horizontalAlignment="RIGHT"/>
+    <Control name="ESOProfilerRow" virtual="true" mouseEnabled="true">
+      <Dimensions x="800" y="24" />
+      <OnMouseEnter>
+        ZO_ScrollList_MouseEnter(ESO_PROFILER.contentList, self)
+      </OnMouseEnter>
+      <OnMouseExit>
+        ZO_ScrollList_MouseExit(ESO_PROFILER.contentList,self)
+      </OnMouseExit>
+      <OnMouseUp>
+        if not upInside then return end
+        if button ~= MOUSE_BUTTON_INDEX_RIGHT then
+        ZO_ScrollList_MouseClick(ESO_PROFILER.contentList, self)
+        else
+        ESO_PROFILER:ShowContextMenu(self)
+        end
+      </OnMouseUp>
+      <Controls>
+        <Label name="$(parent)Name" inherits="ESOProfilerLabel" verticalAlignment="CENTER">
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="0"/>
+          <Dimensions x="540" y="24"/>
+        </Label>
+        <Label name="$(parent)IncludeTime" inherits="ESOProfilerNumLabel" verticalAlignment="CENTER">
+          <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)Name" offsetX="2"/>
+          <Dimensions x="64" y="24"/>
+        </Label>
+        <Label name="$(parent)IncludeTimeMin" inherits="ESOProfilerNumLabel" verticalAlignment="CENTER">
+          <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)IncludeTime" offsetX="2"/>
+          <Dimensions x="64" y="24"/>
+        </Label>
+        <Label name="$(parent)IncludeTimeMax" inherits="ESOProfilerNumLabel" verticalAlignment="CENTER">
+          <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)IncludeTimeMin" offsetX="2"/>
+          <Dimensions x="64" y="24"/>
+        </Label>
+        <Label name="$(parent)ExcludeTime" inherits="ESOProfilerNumLabel" verticalAlignment="CENTER">
+          <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)IncludeTimeMax" offsetX="2"/>
+          <Dimensions x="64" y="24"/>
+        </Label>
+        <Label name="$(parent)Count" inherits="ESOProfilerNumLabel" verticalAlignment="CENTER">
+          <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)ExcludeTime" offsetX="2"/>
+          <Dimensions x="80" y="24"/>
+        </Label>
+      </Controls>
+    </Control>
+    <TopLevelControl name="ESOProfilerTopLevel" inherits="ZO_RightPanelFootPrint" hidden="true">
+      <Controls>
+        <Control name="$(parent)Content">
+          <Anchor point="TOPLEFT" offsetY="5" />
+          <Anchor point="BOTTOMRIGHT" offsetX="-5" />
+
+          <Controls>
+            <EditBox name="$(parent)SearchBox" font="$(BOLD_FONT)|$(KB_18)|soft-shadow-thin" inherits="ZO_DefaultEdit">
+              <Dimensions x="540" />
+              <Anchor point="TOPLEFT" offsetY="4" />
+
+              <OnEscape>
+                ESO_PROFILER:EndSearch(self)
+              </OnEscape>
+
+              <OnTextChanged>
+                if ZO_EditDefaultText_OnTextChanged then ZO_EditDefaultText_OnTextChanged(self) end
+                --ESO_PROFILER:OnSearchTextChanged(self)
+              </OnTextChanged>
+
+              <OnEnter>
+                ESO_PROFILER:OnSearchEnterKeyPressed(self)
+              </OnEnter>
+
+              <Controls>
+                <Backdrop name="$(parent)Bg" inherits="ZO_EditBackdrop">
+                  <AnchorFill />
+                </Backdrop>
+              </Controls>
+            </EditBox>
+            <Button name="$(parent)ExportButton" inherits="ZO_DefaultButton" text="Export" font="$(MEDIUM_FONT)|$(KB_18)|soft-shadow-thin">
+              <Anchor point="TOPRIGHT"/>
+              <OnClicked>ESO_PROFILER:Export()</OnClicked>
+            </Button>
+            <Control name="$(parent)SortBy" inherits="ZO_InventorySortHeaders">
+              <Anchor point="TOPLEFT" />
+              <Anchor point="TOPRIGHT" offsetY="32" />
+              <Controls>
+                <Control name="$(parent)Name" inherits="ZO_SortHeader">
+                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$(parent)" offsetX="0"/>
+                  <Dimensions x="540" y="24"/>
+                  <OnInitialized>
+                    ESOProfiler_InitSortHeader(self, SI_JOURNAL_MENU_ESO_PROFILER_NAME, TEXT_ALIGN_LEFT, "name", ZO_SORT_ORDER_UP)
+                  </OnInitialized>
+                </Control>
+                <Control name="$(parent)IncludeTime" inherits="ZO_SortHeader">
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)Name" offsetX="2"/>
+                  <Dimensions x="64" y="24"/>
+                  <OnInitialized>
+                    ESOProfiler_InitSortHeader(self, SI_JOURNAL_MENU_ESO_PROFILER_INCLUDE_TIME, TEXT_ALIGN_RIGHT, "includeTime", ZO_SORT_ORDER_DOWN)
+                    ZO_SortHeader_SetTooltip(self, GetString(SI_JOURNAL_MENU_ESO_PROFILER_INCLUDE_TIME_TOOLTIP), BOTTOMRIGHT, 0, 32)
+                  </OnInitialized>
+                </Control>
+                <Control name="$(parent)IncludeTimeMin" inherits="ZO_SortHeader">
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)IncludeTime" offsetX="2"/>
+                  <Dimensions x="64" y="24"/>
+                  <OnInitialized>
+                    ESOProfiler_InitSortHeader(self, SI_JOURNAL_MENU_ESO_PROFILER_INCLUDE_TIME_MIN, TEXT_ALIGN_RIGHT, "includeTimeMin", ZO_SORT_ORDER_DOWN)
+                    ZO_SortHeader_SetTooltip(self, GetString(SI_JOURNAL_MENU_ESO_PROFILER_INCLUDE_TIME_MIN_TOOLTIP), BOTTOMRIGHT, 0, 32)
+                  </OnInitialized>
+                </Control>
+                <Control name="$(parent)IncludeTimeMax" inherits="ZO_SortHeader">
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)IncludeTimeMin" offsetX="2"/>
+                  <Dimensions x="64" y="24"/>
+                  <OnInitialized>
+                    ESOProfiler_InitSortHeader(self, SI_JOURNAL_MENU_ESO_PROFILER_INCLUDE_TIME_MAX, TEXT_ALIGN_RIGHT, "includeTimeMax", ZO_SORT_ORDER_DOWN)
+                    ZO_SortHeader_SetTooltip(self, GetString(SI_JOURNAL_MENU_ESO_PROFILER_INCLUDE_TIME_MAX_TOOLTIP), BOTTOMRIGHT, 0, 32)
+                  </OnInitialized>
+                </Control>
+                <Control name="$(parent)ExcludeTime" inherits="ZO_SortHeader">
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)IncludeTimeMax" offsetX="2"/>
+                  <Dimensions x="64" y="24"/>
+                  <OnInitialized>
+                    ESOProfiler_InitSortHeader(self, SI_JOURNAL_MENU_ESO_PROFILER_EXCLUDE_TIME, TEXT_ALIGN_RIGHT, "excludeTime", ZO_SORT_ORDER_DOWN)
+                    ZO_SortHeader_SetTooltip(self, GetString(SI_JOURNAL_MENU_ESO_PROFILER_EXCLUDE_TIME_TOOLTIP), BOTTOMRIGHT, 0, 32)
+                  </OnInitialized>
+                </Control>
+                <Control name="$(parent)Count" inherits="ZO_SortHeader">
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$(parent)ExcludeTime" offsetX="2"/>
+                  <Dimensions x="80" y="24"/>
+                  <OnInitialized>
+                    ESOProfiler_InitSortHeader(self, SI_JOURNAL_MENU_ESO_PROFILER_EXCLUDE_COUNT, TEXT_ALIGN_RIGHT, "count", ZO_SORT_ORDER_DOWN)
+                    ZO_SortHeader_SetTooltip(self, GetString(SI_JOURNAL_MENU_ESO_PROFILER_EXCLUDE_COUNT_TOOLTIP), BOTTOMRIGHT, 0, 32)
+                  </OnInitialized>
+                </Control>
+              </Controls>
+            </Control>
+
+            <Control name="$(parent)List" inherits="ZO_ScrollList">
+              <Anchor point="TOPLEFT" offsetY="56" />
+              <Anchor point="BOTTOMRIGHT" offsetX="0" />
+            </Control>
+          </Controls>
+        </Control>
+        <StatusBar name="$(parent)LoadingBar" inherits="ZO_DefaultStatusBarBG">
+          <Anchor point="BOTTOMLEFT" offsetX="24" />
+          <Anchor point="BOTTOMRIGHT" offsetX="-24" />
+        </StatusBar>
+      </Controls>
+    </TopLevelControl>
+
+    <TopLevelControl name="ESOProfilerScriptTopLevel" hidden="true">
+      <Anchor point="TOPLEFT" relativeTo="ZO_SharedLeftPanelBackground" relativePoint="TOPLEFT"  offsetX="0" offsetY="0"/>
+      <Anchor point="BOTTOMRIGHT" relativeTo="ZO_SharedLeftPanelBackground" relativePoint="BOTTOMRIGHT" offsetX="-30" offsetY="0"/>
+
+      <Controls>
+        <Label name="$(parent)ScriptLabel" font="$(BOLD_FONT)|$(KB_18)" color="FFFFFF" wrapMode="ELLIPSIS" text="Script:">
+          <Dimensions x="100" y="30" />
+          <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="0" offsetY="0"/>
+        </Label>
+
+        <Backdrop name="$(parent)Script" inherits="ZO_EditBackdrop">
+          <Anchor point="TOPLEFT" relativeTo="$(parent)ScriptLabel" relativePoint="BOTTOMLEFT"/>
+          <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT"  offsetX="0" offsetY="-40" />
+          <Controls>
+            <EditBox name="$(parent)EditBox" font="$(MEDIUM_FONT)|$(KB_18)" editEnabled="true" maxInputCharacters="3000" multiLine="true" newLineEnabled="true" inherits="ZO_DefaultEditMultiLineForBackdrop">
+              <AnchorFill />
+            </EditBox>
+          </Controls>
+        </Backdrop>
+
+        <Button name="$(parent)RunCode" inherits="ZO_DefaultButton" font="$(BOLD_FONT)|$(KB_18)" text="Run Code">
+          <Dimensions x="150" y="30" />
+          <Anchor point="BOTTOMLEFT" relativeTo="$(parent)" relativePoint="BOTTOMLEFT" offsetX="10" offsetY="0"/>
+          <OnMouseUp>
+            ESO_PROFILER:RunCode(self, button, upInside)
+          </OnMouseUp>
+        </Button>
+        <Label name="$(parent)LoopLabel" font="$(BOLD_FONT)|$(KB_18)" color="FFFFFF" wrapMode="ELLIPSIS" text="Loop:">
+          <Dimensions y="30" />
+          <Anchor point="LEFT" relativeTo="$(parent)RunCode" relativePoint="RIGHT" offsetX="10" />
+        </Label>
+        <Backdrop name="$(parent)Loop" tier="HIGH" inherits="ZO_SingleLineEditBackdrop_Keyboard">
+          <Anchor point="LEFTTOP" relativeTo="$(parent)LoopLabel" relativePoint="TOPRIGHT" offsetX="5" />
+          <Dimensions x="100" y="30" />
+          <Controls>
+            <EditBox name="$(parent)Count" inherits="ZO_DefaultEditForBackdrop ZO_DefaultEdit" textType="NUMERIC_UNSIGNED_INT" font="$(MEDIUM_FONT)|$(KB_18)"/>
+          </Controls>
+        </Backdrop>
+      </Controls>
+    </TopLevelControl>
+  </Controls>
+</GuiXml>

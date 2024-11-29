@@ -1,0 +1,177 @@
+<GuiXml>
+  <Controls>
+    <Control name="SetManager_Character_Template_Editable" inherits="SetManager_Character_Template" virtual="true">
+      <OnInitialized>
+        SET_MANAGER.Designer:InitializeEditableSlots(self)
+      </OnInitialized>
+      <Controls>
+        <EditBox name="$(parent)Name" inherits="ZO_DefaultEditForDarkBackdrop" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL" maxInputCharacters="64">
+          <Dimensions x="160" y="56"/>
+          <Anchor point="TOPLEFT"  relativeTo="$(parent)EquipmentSlotsBackupMain" relativePoint="BOTTOMLEFT" offsetY="4"/>
+          <Controls>
+            <Label name="$(parent)Instructions" font="ZoFontWinH3" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_DISABLED" text="SI_GAMEPAD_MAIL_SEND_ENTER_NAME">
+              <AnchorFill />
+
+              <OnInitialized>
+                local anim = ZO_AlphaAnimation:New(self)
+                anim:PingPong(1, 0.4, 1000, LOOP_INDEFINITELY)
+              </OnInitialized>
+            </Label>
+          </Controls>
+        </EditBox>
+      </Controls>
+    </Control>
+    <Button name="SetManagerItemListRow" virtual="true" mouseEnabled="true">
+      <Dimensions x="300" y="48" />
+      <Controls>
+        <Texture name="$(parent)Highlight" textureFile="EsoUI/Art/Miscellaneous/listItem_highlight.dds" alpha="0">
+          <AnchorFill />
+          <TextureCoords left="0" right="1" top="0" bottom=".625" />
+        </Texture>
+
+        <Texture name="$(parent)Texture" level="3">
+          <Anchor point="TOPLEFT" offsetX="10" offsetY="4" />
+          <Dimensions x="40" y="40"/>
+          <Controls>
+            <!--<Texture name="$(parent)BG" textureFile="EsoUI/Art/Achievements/achievements_iconBG.dds" level="2">
+              <AnchorFill />
+            </Texture>-->
+            <!--<Texture name="$(parent)Frame" textureFile="EsoUI/Art/ActionBar/abilityFrame64_up.dds" layer="CONTROLS">
+              <AnchorFill />
+            </Texture>-->
+          </Controls>
+        </Texture>
+
+        <Label name="$(parent)Name" font="ZoFontWinH4" wrapMode="ELLIPSIS" verticalAlignment="CENTER" horizontalAlignment="LEFT">
+          <Dimensions y="38"/>
+          <Anchor point="TOPLEFT" relativeTo="$(parent)Texture" relativePoint="TOPRIGHT" offsetX="4" offsetY="0"/>
+          <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-4" offsetY="0"/>
+        </Label>
+        <Label name="$(parent)Trait" font="$(BOLD_FONT)|14" wrapMode="ELLIPSIS" verticalAlignment="BOTTOM" horizontalAlignment="LEFT" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL">
+          <Dimensions y="48"/>
+          <Anchor point="BOTTOMLEFT" relativeTo="$(parent)Texture" relativePoint="BOTTOMRIGHT" offsetX="4"/>
+          <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-4" offsetY="-2"/>
+        </Label>
+      </Controls>
+    </Button>
+
+    <Button name="SetManagerSetsListRow" virtual="true" mouseEnabled="true">
+      <Dimensions x="300" y="48" />
+      <Controls>
+        <Texture name="$(parent)Highlight" textureFile="EsoUI/Art/Miscellaneous/listItem_highlight.dds" alpha="0">
+          <AnchorFill />
+          <TextureCoords left="0" right="1" top="0" bottom=".625" />
+        </Texture>
+
+        <Texture name="$(parent)Texture" level="3">
+          <Anchor point="TOPLEFT" offsetX="10" offsetY="4" />
+          <Dimensions x="40" y="40"/>
+          <!--<Controls>
+            <Texture name="$(parent)BG" textureFile="EsoUI/Art/Achievements/achievements_iconBG.dds" level="2">
+              <AnchorFill />
+            </Texture>
+            <Texture name="$(parent)Frame" textureFile="EsoUI/Art/ActionBar/abilityFrame64_up.dds" layer="CONTROLS">
+              <AnchorFill />
+            </Texture>
+          </Controls>-->
+        </Texture>
+
+        <Label name="$(parent)Name" font="ZoFontWinH4" verticalAlignment="CENTER" horizontalAlignment="LEFT" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL">
+          <Dimensions y="48"/>
+          <Anchor point="TOPLEFT" relativeTo="$(parent)Texture" relativePoint="TOPRIGHT" offsetX="4" offsetY="-2"/>
+          <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-36" offsetY="0"/>
+        </Label>
+        <Texture name="$(parent)QualityS" textureFile="esoui/art/icons/alchemy/crafting_alchemy_trait_restorestamina.dds" color="INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS:ITEM_QUALITY_LEGENDARY">
+          <Anchor point="TOPRIGHT" offsetX="-6" offsetY="5" />
+          <Dimensions x="20" y="20"/>
+        </Texture>
+        <Texture name="$(parent)QualityM" textureFile="esoui/art/icons/alchemy/crafting_alchemy_trait_restoremagicka.dds" color="INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS:ITEM_QUALITY_LEGENDARY">
+          <Anchor point="TOPRIGHT" relativeTo="$(parent)QualityS" offsetX="-14" offsetY="7" />
+          <Dimensions x="20" y="20"/>
+        </Texture>
+        <Texture name="$(parent)QualityH" textureFile="esoui/art/icons/alchemy/crafting_alchemy_trait_restorehealth.dds" color="INTERFACE_COLOR_TYPE_ITEM_QUALITY_COLORS:ITEM_QUALITY_LEGENDARY">
+          <Anchor point="TOPRIGHT" relativeTo="$(parent)QualityS" offsetX="-2" offsetY="17" />
+          <Dimensions x="16" y="16"/>
+        </Texture>
+      </Controls>
+    </Button>
+
+    <Control name="SetManagerHorizontalScrollList" virtual="true">
+      <OnInitialized>
+        ZO_SmithingHorizontalListTemplate_OnInitialized(self)
+      </OnInitialized>
+
+      <Controls>
+        <Control name="$(parent)List" inherits="ZO_HorizontalScrollListTemplate">
+          <Dimensions x="343" y="64" />
+          <Anchor point="CENTER" />
+        </Control>
+
+        <Label name="$(parent)Title" font="ZoFontWinH3" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" modifyTextType="UPPERCASE">
+          <Anchor point="TOPLEFT" offsetY="8"/>
+        </Label>
+
+        <Label name="$(parent)SelectedLabel" font="ZoFontWinH4" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_NORMAL">
+          <Anchor point="TOP" offsetY="8"/>
+        </Label>
+
+        <Label name="$(parent)ExtraInfoLabel" font="ZoFontWinH4" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" hidden="true">
+          <Anchor point="BOTTOM" offsetY="-8"/>
+        </Label>
+      </Controls>
+    </Control>
+
+    <TopLevelControl name="SetManagerTopLevel" mouseEnabled="true" hidden="true" allowBringToTop="false">
+      <Anchor point="TOPLEFT" relativeTo="ZO_SharedWideRightBackground" offsetY="20" />
+      <Anchor point="BOTTOMRIGHT" relativeTo="ZO_SharedWideRightBackground" offsetY="-30" />
+
+      <Controls>
+        <Control name="$(parent)ModeMenu" inherits="ZO_SceneMenu">
+          <Anchor point="TOPRIGHT" relativeTo="ZO_SharedWideRightBackground" offsetX="-40"/>
+          <Dimensions x="550"/>
+        </Control>
+        <Control name="$(parent)SetsList" inherits="ZO_ScrollList">
+          <Dimensions x="343"/>
+          <Anchor point="TOPLEFT" offsetX="0" offsetY="32" />
+          <Anchor point="BOTTOMLEFT" offsetX="0" offsetY="0" />
+        </Control>
+        <Control name="$(parent)SetTemplate">
+          <Dimensions x="273" />
+          <Anchor point="TOPLEFT" relativeTo="$(parent)SetsList" relativePoint="TOPRIGHT" offsetX="48" />
+          <Anchor point="BOTTOMLEFT" relativeTo="$(parent)SetsList" relativePoint="BOTTOMRIGHT" offsetX="48" />
+
+          <Controls>
+            <Control name="$(parent)List" inherits="ZO_HorizontalScrollListTemplate">
+              <Dimensions x="273" y="532" />
+              <Anchor point="CENTER" />
+            </Control>
+          </Controls>
+        </Control>
+        <Control name="$(parent)ItemList" inherits="ZO_ScrollList">
+          <Dimensions x="343"/>
+          <Anchor point="TOPLEFT" relativeTo="$(parent)SetTemplate" relativePoint="TOPRIGHT" offsetX="48" offsetY="48" />
+          <Anchor point="BOTTOMLEFT" relativeTo="$(parent)SetTemplate" relativePoint="BOTTOMRIGHT" offsetX="48" offsetY="-100" />
+        </Control>
+        <Control name="$(parent)Craft" resizeToFitDescendents="true">
+          <Anchor point="TOP" relativeTo="$(parent)ItemList" relativePoint="BOTTOM" />
+          <Controls>
+            <Control name="$(grandparent)Quality" inherits="ZO_MenuBarTemplate">
+              <Dimensions x="195" />
+              <Anchor point="BOTTOMRIGHT" relativeTo="$(grandparent)ItemList" relativePoint="TOPRIGHT" offsetY="-8" />
+              <Controls>
+                <Label name="$(parent)Label" font="ZoFontWindowSubtitle" color="INTERFACE_COLOR_TYPE_TEXT_COLORS:INTERFACE_TEXT_COLOR_SELECTED" modifyTextType="UPPERCASE" excludeFromResizeToFitExtents="true">
+                  <Anchor point="RIGHT" relativePoint="LEFT" offsetX="-25" offsetY="0" />
+                </Label>
+              </Controls>
+            </Control>
+            <Control name="$(grandparent)StyleList" inherits="SetManagerHorizontalScrollList">
+              <Dimensions x="375" y="100" />
+              <Anchor point="TOPRIGHT" relativeTo="$(grandparent)ItemList" relativePoint="BOTTOMRIGHT" offsetX="16"  offsetY="30" />
+            </Control>
+          </Controls>
+        </Control>
+      </Controls>
+    </TopLevelControl>
+  </Controls>
+
+</GuiXml>
