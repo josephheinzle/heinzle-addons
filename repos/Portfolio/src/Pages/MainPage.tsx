@@ -107,6 +107,7 @@ const MainPage = (props: Types.NO_PROPS) => {
     );
   };
 
+  // return null;
   return (
     <div className="d-flex flex-wrap">
       <div className="my-4">
