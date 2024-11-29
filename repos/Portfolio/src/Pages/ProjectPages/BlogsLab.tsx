@@ -2,9 +2,8 @@ import * as React from "react";
 import * as Types from "../../../Types";
 import { BlogsLabDetails } from "../../ProjectInfo";
 import ProjectLinks from "../../Components/ProjLinks";
-import { useEffect } from "react";
 
-const BlogsLab = (props: Types.NO_PROPS) => {
+const BlogsLab = (props: Types.BlogsLabProps) => {
   return (
     <div className="my-4">
       <h1 className="text-center">Blogs Lab</h1>

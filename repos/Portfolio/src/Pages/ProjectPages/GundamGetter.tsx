@@ -1,9 +1,8 @@
 import * as React from "react";
-import { useEffect } from "react";
 import * as Types from "../../../Types";
 import { GundamGetterDetails } from "../../ProjectInfo";
 
-const GundamGetter = (props: Types.NO_PROPS) => {
+const GundamGetter = (props: Types.GundamGetterProps) => {
   return (
     <div className="my-4">
       <h1 className="text-center">Gundam Getter</h1>
