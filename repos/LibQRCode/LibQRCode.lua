@@ -18,8 +18,6 @@ local qrContainer = nil
 --have available.  Be sure to set unused ones to hidden (e.g. if we previously had a 32x32 matrix, but now we only need a 21x21 matrix,
 --there will be 583 controls left over that we don't want to be visible any longer).
 local controlCache = {}
---Control is probably a BackdropControl of some kind.
---data should be a string
 
 local function GetCacheForParent(parentName)
 	local parentCache = nil
@@ -48,7 +46,10 @@ local function GetPixelSize(parentX, parentY, rowcount, colcount)
 	return math.min(pxX, pxY)
 end
 
-function DrawQRCode(control, data)
+
+--Control should be a TextureControl
+--data should be a string
+function LibQRCode.DrawQRCode(control, data)
 	if control:GetType() ~= CT_TEXTURE then
 		error("Expected a ControlTexture (Type="..CT_TEXTURE.."), found Type="..control:GetType())
 	end
@@ -153,7 +154,7 @@ function DrawQRCode_Floating(data)
 		floatingWindow:SetHidden(false) 
 	end
 	
-	DrawQRCode(qrContainer, data)
+	LibQRCode.DrawQRCode(qrContainer, data)
 end
 
 function DrawQRCode_FloatingTest(n)
@@ -165,7 +166,7 @@ function DrawQRCode_FloatingTest(n)
 end
 
 SLASH_COMMANDS["/qrcode"] = DrawQRCode_Floating
-SLASH_COMMANDS["/qrcodetest"] = DrawQRCode_FloatingTest
+--SLASH_COMMANDS["/qrcodetest"] = DrawQRCode_FloatingTest
 
 --Addon loaded function
 local function OnLibraryLoaded(event, name)
