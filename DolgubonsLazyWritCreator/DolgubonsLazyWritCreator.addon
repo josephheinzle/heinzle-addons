@@ -4,17 +4,17 @@
 ; States and/or other countries. All rights reserved.
 ; You can read the full terms at https://account.elderscrollsonline.com/add-on-terms
 
-## Title: Dolgubon's Lazy Writ Creator v4.0.5.1
+## Title: Dolgubon's Lazy Writ Creator v4.0.5.2.1
 ## Description: Simplifying writs since 2016
 ## APIVersion: 101047 101048
 ## Author: Dolgubon
-## Version: 4.0.5.1
-## AddOnVersion: 4051
+## Version: 4.0.5.2.1
+## AddOnVersion: 4052
 ## DependsOn: LibLazyCrafting>=4030
 ## PCDependsOn: LibAddonMenu-2.0
-## ConsoleDependsOn:  LibPrice
+## ConsoleDependsOn:  LibPrice LibRadialMenu
 ; ## ConsoleDependsOn: LibHarvensAddonSettings LibPrice LibQRCode
-## OptionalDependsOn: pChat LibStub LibFeedback LibCustomMenu  LibHistoire ArkadiusTradeToolsSales LibHarvensAddonSettings LibQRCode
+## OptionalDependsOn: pChat LibStub LibFeedback LibCustomMenu  LibHistoire ArkadiusTradeToolsSales LibHarvensAddonSettings LibQRCode LibRadialMenu
 ## SavedVariables: DolgubonsWritCrafterSavedVars
 
 LWCbackground.dds

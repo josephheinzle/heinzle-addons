@@ -681,8 +681,13 @@ function WritCreater.LootHandlerInitialize()
 	end )
 end
 
+local function sellJunk()
+	SellAllJunk()
+	CHAT_ROUTER:AddSystemMessage("Sold all Junk items")
+end
+
 if IsConsoleUI() then
-	-- EVENT_MANAGER:RegisterForEvent(WritCreator.name,EVENT_OPEN_STORE, SellAllJunk) -- this could maybe go badly?
+	EVENT_MANAGER:RegisterForEvent(WritCreater.name,EVENT_OPEN_STORE, sellJunk) -- this could maybe go badly? Hopefully not!
 end
 
 --/script for k, v in pairs(SCENE_MANAGER:GetCurrentScene().callbackRegistry) do d(k) end

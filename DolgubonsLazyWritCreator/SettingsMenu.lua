@@ -155,6 +155,7 @@ local function isCheeseOn()
 		["@Kelinmiriel"] = UI_PLATFORM_PC,
 		["@StorybookTerror"] = UI_PLATFORM_PC,
 		["@J3zdaz"] =UI_PLATFORM_XBOX,
+		["@ThePurpleDDragon"] = UI_PLATFORM_PC,
 
 	}
 	local platform = GetUIPlatform()

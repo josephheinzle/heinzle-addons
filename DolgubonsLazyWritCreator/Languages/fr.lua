@@ -150,6 +150,12 @@ local function runeMissingFunction (ta,essence,potency)
 
 end
 
+local function masterWritSmithCraft (link, trait, style, quality, writName)
+	-- local partialString = zo_strformat("Crafting a CP150 <<t:6>> <<t:1>> from <<t:2>> with the <<t:3>> trait and <<t:4>> style at <<t:5>> quality",pat,set,trait,style,qual,mat)
+	local partialString = zo_strformat("<<t:5>>: Fabrique un <<t:1>> de PC150 avec le trait <<t:2>> et le style <<t:3>> de qualité <<t:4>>", link, trait, style, quality, writName)
+	return partialString
+end
+
 WritCreater.strings = WritCreater.strings or {}
 
 WritCreater.strings["runeReq"] 						= function (essence, potency) return zo_strformat("|c2dff00L'artisanat requiert 1 |rTa|c2dff00, 1 |cffcc66<<1>>|c2dff00 et 1 |c0066ff<<2>>|r",essence ,potency) end
@@ -184,7 +190,7 @@ WritCreater.strings['masterWritSave']				= "Dolgubon's Lazy Writ Crafter vous a 
 WritCreater.strings['missingLibraries']			= "Dolgubon's Lazy Writ Crafter a besoin des librairies indépendantes suivantes. Merci de télécharger, installer ou activer ces librairies :"
 WritCreater.strings['resetWarningMessageText']		= "La réinitialisation quotidienne des commandes aura lieu dans <<1>> heure(s) et <<2>> minute(s).\nVous pouvez personnaliser ou désactiver cet avertissement dans les réglages."
 WritCreater.strings['resetWarningExampleText']		= "L’avertissement ressemblera à ça"
-WritCreater.strings["newMasterWritSmithToCraft"] = "<<t:5>>: Fabrique un <<t:1>> de PC150 avec le trait <<t:2>> et le style <<t:3>> de qualité <<t:4>>"
+WritCreater.strings["newMasterWritSmithToCraft"] = masterWritSmithCraft
 WritCreater.strings["lowInventory"] = "Vous n'avez plus que <<1>> emplacements libres et donc possiblement pas assez de place"
 WritCreater.strings["masterWritQueueCleared"] = "Queue des commandes de maître d'artisanat annulée"
 WritCreater.strings["multiplierCraftPrediction"] = "Fabrique <<2>> objets pour <<1[nothing/$d cycle/$d cycles]>> de commandes"

@@ -44,7 +44,7 @@ if expectedVersion and loadedVersion < expectedVersion then
 	EVENT_MANAGER:RegisterForEvent(WritCreater.name.."IntegrityCheck", EVENT_PLAYER_ACTIVATED, function()
 		EVENT_MANAGER:UnregisterForEvent(WritCreater.name.."IntegrityCheck", EVENT_PLAYER_ACTIVATED)
 		-- Fallback message if the localization file is unavailable
-		zo_callLater(function() CHAT_ROUTER:AddSystemMessage("ERROR: Corrupted installation of Dolgubon's Lazy Writ Crafter detected; please uninstall and reinstall.") end , 1000)
+		zo_callLater(function() CHAT_ROUTER:AddSystemMessage("ERROR: Potentially corrupted installation of Dolgubon's Lazy Writ Crafter detected; please uninstall and reinstall.") end , 1000)
 	end)
 	-- return
 end
@@ -314,6 +314,7 @@ WritCreater.defaultAccountWide = {
 		["rewardClaimed"] = false,
 		['hasSeenMostAwesomePursuitEver'] = false,
 	},
+	["craftedMasterWrits"] = {},
 	["viewedChangelogs"] = {
 
 	},
@@ -744,8 +745,13 @@ local function initializeLibraries()
 	end
 	
 	WritCreater.LLCInteractionMaster = LibLazyCrafting:AddRequestingAddon(WritCreater.name.."Master", true, function(event, station, result)
+		local reference = result and result.reference
+		if reference and type(reference) == "string" then
+			WritCreater.savedVarsAccountWide.craftedMasterWrits[reference] = true
+		end
 		if event == LLC_CRAFT_SUCCESS then 
-	 	WritCreater.masterWritCompletion(event, station, result)end 
+		 	WritCreater.masterWritCompletion(event, station, result)
+		 end
 	 end)
 
 	WritCreater.savedVarsAccountWide["craftLog"] = WritCreater.savedVarsAccountWide["craftLog"]  or {}
@@ -797,6 +803,10 @@ local function initializeLibraries()
 	buttonInfo, 
 	feedbackString)
 	DolgubonsWritsFeedback2 = feedbackWindow2
+	local function permaHide(control)
+		control:SetHidden(true)
+		control.SetHidden = function() end
+	end
 end
 
 local function initializeLocalization()

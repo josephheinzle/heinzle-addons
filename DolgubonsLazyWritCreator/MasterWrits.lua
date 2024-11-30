@@ -58,6 +58,9 @@ local function dbug(...)
 	DolgubonGlobalDebugOutput(...)
 end
 
+local function generateItemReference()
+end
+
 --SLASH_COMMANDS['/senddebug'] = sendDebug
 --SLASH_COMMANDS['/sendebug']  = sendDebug
 local trackedSealedWrits = {}
@@ -146,7 +149,7 @@ local function improvedMasterWritQuest(journalIndex, questName)
 		return
 	end
 	local _, _, station, itemQuality, itemTemplateId, setIndex, itemTraitType, itemStyleId =  GetQuestConditionMasterWritInfo(journalIndex)
-	queueMasterWrit(station, itemQuality, itemTemplateId, setIndex, itemTraitType, itemStyleId, questName, itemTemplateId)
+	queueMasterWrit(station, itemQuality, itemTemplateId, setIndex, itemTraitType, itemStyleId, questName, journalIndex)
 end
 
 local function improvedRightClick(link, station, uniqueId)
@@ -166,7 +169,7 @@ local function improvedRightClick(link, station, uniqueId)
 	local itemTraitType = tonumber(x[14])
 	local itemStyleId = tonumber(x[15])
 	local name = GetItemLinkName(link)
-	queueMasterWrit(station, itemQuality, itemTemplateId, setIndex, itemTraitType, itemStyleId, name, link)
+	queueMasterWrit(station, itemQuality, itemTemplateId, setIndex, itemTraitType, itemStyleId, name, uniqueId)
 end
 
 local function improvedEnchantRightClick(link, station, uniqueId)
@@ -175,7 +178,7 @@ local function improvedEnchantRightClick(link, station, uniqueId)
 	local resultItemId = tonumber(x[10])
 	local levelId = tonumber(x[11])
 	local name = GetItemLinkName(link)
-	EnchantingMasterWrit(resultItemId, levelId, quality, link, name)
+	EnchantingMasterWrit(resultItemId, levelId, quality, uniqueId, name)
 end
 
 local function improvedEnchantJournal(journalIndex, name)
@@ -184,7 +187,7 @@ local function improvedEnchantJournal(journalIndex, name)
 		return
 	end
 	local itemId, levelId, station, quality = GetQuestConditionMasterWritInfo(journalIndex, 1,1)
-	EnchantingMasterWrit(itemId, levelId, quality, itemId, name)
+	EnchantingMasterWrit(itemId, levelId, quality, journalIndex, name)
 end
 
 local function provisioningJournal(journalIndex, name)
@@ -201,7 +204,7 @@ local function provisioningJournal(journalIndex, name)
 	end
 	local quantity = calculateRequiredProvisioningAmount(needed, itemId)
 	if quantity > 0 then
-		ProvisioningMasterWrit(itemId, quantity, itemId, name)
+		ProvisioningMasterWrit(itemId, quantity, journalIndex, name)
 	else
 
 		d(zo_strformat(WritCreater.strings['masterRecipeError'], name))
@@ -266,7 +269,7 @@ local function provisioningRightClick(link, station, uniqueId)
 		d(WritCreater.strings['masterQueueNotFound'])
 		return
 	end
-	ProvisioningMasterWrit(resultItemId, quantity, link, name)
+	ProvisioningMasterWrit(resultItemId, quantity, uniqueId, name)
 end
 
 
@@ -336,25 +339,40 @@ local exampleSealedWrits = {
     [GetItemLinkName("|H1:item:167172:5:1:0:0:0:117963:0:0:0:0:0:0:0:0:0:0:0:0:0:10000|h|h")] = CRAFTING_TYPE_IMPERIAL,
 }
 WritCreater.sealedWritNames = exampleSealedWrits
+local attemptedToQueueOnce = {
+
+}
 
 local function itemHandler(bag, slot, station)
 	if not station then
 		return
 	end
+	local uniqueId = Id64ToString(GetItemUniqueId(bag, slot))
+	if WritCreater.savedVarsAccountWide.craftedMasterWrits[uniqueId] then
+		if attemptedToQueueOnce[uniqueId] then
+			CHAT_ROUTER:AddSystemMessage("Clearing already crafted status of "..GetItemLink(bag, slot).." and re-queuing")
+			attemptedToQueueOnce[uniqueId] = nil
+			WritCreater.savedVarsAccountWide.craftedMasterWrits[uniqueId] = nil
+		else
+			attemptedToQueueOnce[uniqueId] = true
+			CHAT_ROUTER:AddSystemMessage(GetItemLink(bag, slot).." not added. It has already been crafted. Attempt to queue it from your inventory again to re-craft it")
+			return
+		end
+	end -- already crafted
 	if station == CRAFTING_TYPE_ENCHANTING then
 		local link = GetItemLink(bag, slot)
-		improvedEnchantRightClick(link, station)
+		improvedEnchantRightClick(link, station, uniqueId)
 		return
 	elseif station == CRAFTING_TYPE_ALCHEMY then
-		WritCreater.alchemySealedWrit(bag, slot)
+		WritCreater.alchemySealedWrit(bag, slot, uniqueId)
 	elseif station == CRAFTING_TYPE_PROVISIONING or station == CRAFTING_TYPE_WITCHES or station == CRAFTING_TYPE_NEWLIFE or station == CRAFTING_TYPE_DEEPWINTER or station == CRAFTING_TYPE_IMPERIAL then
-		provisioningRightClick(GetItemLink(bag, slot), station)
+		provisioningRightClick(GetItemLink(bag, slot), station, uniqueId)
 	elseif station and station >0 and station <8 then
-		improvedRightClick(GetItemLink(bag, slot), station)
+		improvedRightClick(GetItemLink(bag, slot), station, uniqueId)
 	else
 		return
 	end
-    trackedSealedWrits[#trackedSealedWrits + 1] = {bag, slot, GetItemUniqueId(bag, slot)}
+    trackedSealedWrits[#trackedSealedWrits + 1] = {bag, slot, uniqueId}
 end
 
 local function canCraftSealedWrit(link)
@@ -483,12 +501,14 @@ function WritCreater.InitializeRightClick()
 	end
 end
 
+
 function WritCreater.queueAllSealedWrits(bag)
 	outputCounter = 0
 	WritCreater.LLCInteractionMaster:cancelItem()
 	for i = 0, GetBagSize(bag) do
 		local itemType, specializedType = GetItemType(bag, i)
-		if itemType == ITEMTYPE_MASTER_WRIT then
+		local uniqueId = Id64ToString(GetItemUniqueId(bag, i))
+		if itemType == ITEMTYPE_MASTER_WRIT and not (WritCreater.savedVarsAccountWide.craftedMasterWrits[uniqueId]) then
 			local name = GetItemName(bag, i)
 			local stationType = exampleSealedWrits[name]
 			if stationType and not IsItemJunk(bag, i) then

@@ -46,17 +46,24 @@ Changed the background texture to use the old background texture
 {4041,
 [[Added support for gold mats to the rewards handling
 ]]},
-{
-	4051,
-	console=[[
-PSA: Ealier today, LibHarvenAddonSettings(LHAS), LibQRCode, and Tamriel Savings Co were subject to false copyright strikes and removed from the game.
-Any addon which used LHAS to create a settings menu will be unusable unless updated by the authors to not require it.
-Please do not badger authors to do so. Some may be unable to do these updates.
+-- {
+-- 	4051,
+-- 	console=[[
+-- PSA: Ealier today, LibHarvenAddonSettings(LHAS), LibQRCode, and Tamriel Savings Co were subject to false copyright strikes and removed from the game.
+-- Any addon which used LHAS to create a settings menu will be unusable unless updated by the authors to not require it.
+-- Please do not badger authors to do so. Some may be unable to do these updates.
 
-Because of the removal, until LHAS has been restored to the game, you will be |L0:0:0:90%%:10%%:|lunable to change the settings for Lazy Writ Crafter|l.
-The settings you have previously set will be used, but you can use /resetwritcraftersettings to reset the settings.
-]]
-}
+-- Because of the removal, until LHAS has been restored to the game, you will be |L0:0:0:90%%:10%%:|lunable to change the settings for Lazy Writ Crafter|l.
+-- The settings you have previously set will be used, but you can use /resetwritcraftersettings to reset the settings.
+-- ]]
+-- }
+{4052,console=
+[[Added LibRadialMenu support. Using the radial menu, you can now craft sealed writs, port to a crafting house, or more!
+Improved the identification of unique sealed writs. You'll now be able to queue multiple identical sealed writs at the same time
+Queueing sealed writs will now also not re-queue previously crafted sealed writs.
+ |t12:12:EsoUI/Art/Miscellaneous/bullet.dds|t If you need to re-craft a previously crafted writ, (Why'd you decon it? You needed that!) you can re-queue it from the inventory.
+Writ Rewards set to be junked, will now be automatically sold when interacting with an NPC merchant.
+]]},
 
 }-- ,pc =[[Added a port to crafting house button to the settings menu]]
 

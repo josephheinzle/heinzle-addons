@@ -446,7 +446,10 @@ WritCreater.optionStrings['statusBarVertical']							= "Vertical Position"
 WritCreater.optionStrings['statusBarVerticalTooltip']					= "Vertical position of the status bar"
 WritCreater.optionStrings['keepItemWritFormat']							= "Keep <<1>>"
 WritCreater.optionStrings["npcStyleStoneReminder"]						= "Reminder: You can purchase base racial style stones from any crafting NPC vendor for 15g each"
-
+WritCreater.optionStrings['voucherCount']								= "Count # of unearned Writ Vouchers"
+WritCreater.optionStrings['voucherCountTooltip']						= "Output the total number of writ vouchers of all sealed master writs in the player's inventory and bank"
+WritCreater.optionStrings['surveyCount']								= "Count # of surveys"
+WritCreater.optionStrings['surveyCountTooltip']							= "Outputs a breakdown of the number of surveys in the player's inventory and bank"
 
 
 
